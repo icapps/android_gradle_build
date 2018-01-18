@@ -2,6 +2,7 @@ package com.icapps.build.gradle.plugin
 
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
+import com.icapps.build.gradle.plugin.plugins.codequality.BitBucketPullRequestPlugin
 import com.icapps.build.gradle.plugin.plugins.codequality.DetektPlugin
 import com.icapps.build.gradle.plugin.plugins.codequality.PullRequestPlugin
 import com.icapps.build.gradle.plugin.plugins.deploy.DeployToHockeyPlugin
@@ -27,6 +28,7 @@ open class BuildPlugin : Plugin<Project> {
                 VersionBumpPlugin(),
                 DetektPlugin(),
                 PullRequestPlugin(),
+                BitBucketPullRequestPlugin(),
                 DeployToHockeyPlugin(),
                 deployToPlayStorePlugin)
 
