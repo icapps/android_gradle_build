@@ -9,7 +9,7 @@ Import in root gradle
     buildscript {
         repositories {
             ...
-        	maven { url "https://plugins.gradle.org/m2/" }
+        	maven { url "https://dl.bintray.com/icapps/maven" }
             ...
         }
         dependencies {
