@@ -2,6 +2,8 @@
 
 **How To Use**
 
+[ ![Download](https://api.bintray.com/packages/icapps/maven/icapps-build-gradle-plugin/images/download.svg) ](https://bintray.com/icapps/maven/icapps-build-gradle-plugin/_latestVersion)
+
 Import in root gradle 
 
     buildscript {
@@ -28,15 +30,19 @@ Add the `iCappsBuildConfig` at the bottom of you app/build.gradle file
 <tab/><tab/>- pr will be enabled with the correct `lineVariant` and `unitTestVariant`
 <br/>
 <tab/><tab/>- hockey will be enabled with the given `apiKey`
-translations
+<br/>
+<tab/><tab/>- translations will be enabled with the given `apiKey`
+<br/>
+<tab/><tab/>- playStore will be enabled with the given `serviceAccountEmail` and `pk12File`
+
     
     iCappsBuildConfig {
         detekt {
         }
     
         pr {
-            lintVariant = "androidtvProductionDebug"
-            unitTestVariant = "firetvLabRelease"
+            lintVariant = "your-variant-for-lint-check"
+            unitTestVariant = "your-variant-for-unit-testing"
         }
     
         hockey {
@@ -46,6 +52,11 @@ translations
         translations {
             apiKey = "your-icapps-translations-api-key"
         }
+        
+        playStore { 
+            serviceAccountEmail = 'your-play-store-account-email'
+            pk12File = file("${projectDir}/signing/key.p12")
+        }    
     }
 
 **Configure Detekt**
@@ -125,8 +136,8 @@ By adding the following command to your `iCappsBuildConfig` you will enable `pr`
 By adding the correct `lintVariant`, `unitTestVariant` ,`deviceTestVariant` you will be sure the correct variant is used in every check/test. This will be **required** from the moment you use product flavors, flavor dimensions
 
     pr {
-        lintVariant = "your-lint-variant"                   //This build variant will be used for the lint check in your pr build. Default: ("release" if exists, otherwise the first debuggable build type) 
-        unitTestVariant = "your-unit-test-variant"          //This build variant will be used for the unit testing in your pr build. Default: ("release" if exists, otherwise the first debuggable build type)
+        lintVariant = "your-variant-for-lint-check"         //This build variant will be used for the lint check in your pr build. Default: ("release" if exists, otherwise the first debuggable build type) 
+        unitTestVariant = "your-variant-for-unit-testing"   //This build variant will be used for the unit testing in your pr build. Default: ("release" if exists, otherwise the first debuggable build type)
     }
         
 _Full Setup_
@@ -145,11 +156,11 @@ By adding the correct `lintVariant`, `unitTestVariant` ,`deviceTestVariant` you 
         deviceTestVariant = "your-device-test-variant"  //This build variant will be used for the device testing in your pr build. Default: ("release" if exists, otherwise the first debuggable build type)
     }
 
-**Configure Hockey App**
+**Configure Hockey App Publisher**
 
 _Default Setup_
 
-By adding the following command to your `iCappsBuildConfig` you will enable `hockey` for your project with the default detekt configuration
+By adding the following command to your `iCappsBuildConfig` you will enable `hockey` for your project with the default HockeyApp configuration
 <br/>
 This are all the **required** params
 
@@ -159,7 +170,7 @@ This are all the **required** params
     
 _Recommended Single Variant Setup_
 
-By adding the following command to your `iCappsBuildConfig` you will enable `hockey` for your project with the default detekt configurations and will override all the given params
+By adding the following command to your `iCappsBuildConfig` you will enable `hockey` for your project with the default HockeyApp configurations and will override all the given params
 
     hockey {
         apiToken = "your-hockey-app-api-token"          //The token that will be used to authenticate with Hockey App
@@ -263,10 +274,45 @@ _More Info_
 
 https://github.com/Chimerapps/icapps-translations-gradle-plugin\
 
+**Configure Play Store Publisher**
+
+_Default Setup_
+
+By adding the following command to your `iCappsBuildConfig` you will enable `playStore` for your project with the default Play Store Publisher configuration
 <br/>
-<br/>
-<br/>
-<br/>
+This are all the **required** params
+
+    playStore {
+        serviceAccountEmail = 'your-play-store-account-email'   //Your email adress that will be used to authenticate with Google Play Console
+        pk12File = file("${projectDir}/signing/key.p12")        //The file that will be used for authenticating with the Google Play Console
+    }
+    
+_Recommended Setup_
+
+By adding the following command to your `iCappsBuildConfig` you will enable `playStore` for your project with the default Play Store Publisher configurations and will override all the given params
+
+    playStore {
+        serviceAccountEmail = 'your-play-store-account-email'   //Your email adress that will be used to authenticate with Google Play Console
+        pk12File = file("${projectDir}/signing/key.p12")        //The file that will be used for authenticating with the Google Play Console
+        track = "alpha"                                         //The track where your bill wil be deployed. Possible Options: (alpha, beta, rollout, production). Default: alpha
+    }
+    
+_Full Setup_
+
+By adding the following command to your `iCappsBuildConfig` you will enable `playStore` for your project with all the given params
+
+    playStore { 
+        serviceAccountEmail = 'your-play-store-account-email'   //Your email adress that will be used to authenticate with Google Play Console
+        pk12File = file("${projectDir}/signing/key.p12")        //The file that will be used for authenticating with the Google Play Console
+        track = "alpha"                                         //The track where your bill wil be deployed. Possible Options: (alpha, beta, rollout, production). Default: alpha
+        userFraction = 0.1                                      //The track where your bill wil be deployed. Possible Options: value from 0 to 1. Default: 0.1
+        untrackOld = false                                      //The track where your bill wil be deployed. Possible Options: (true,false). Default: false
+    }   
+    
+_More Info_
+
+https://github.com/Triple-T/gradle-play-publisher
+
 <br/>
 <br/>
 
@@ -284,9 +330,13 @@ _Gradle Translations plugin:_
 
 https://github.com/Chimerapps/icapps-translations-gradle-plugin
 
-_Gradle to Hockey App upload:_
+_Gradle Hockey App Publisher:_
 
 https://github.com/x2on/gradle-hockeyapp-plugin
+
+_Gradle Play Store Publisher:_
+
+https://github.com/Triple-T/gradle-play-publisher
 
 _Gradle detektCheck plugin:_
 

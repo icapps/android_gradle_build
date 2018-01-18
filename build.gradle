@@ -63,13 +63,13 @@ dependencies {
 }
 
 bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
+    user = System.getenv('BINTRAY_USER_ICAPPS')
+    key = System.getenv('BINTRAY_KEY_ICAPPS')
     pkg {
         repo = 'maven'
         name = 'icapps-build-gradle-plugin'
         licenses = ['Apache-2.0']
-        vcsUrl = ''
+        vcsUrl = 'https://github.com/icapps/android_gradle_build'
 
         version {
             name = "$artifactVersion"
@@ -120,7 +120,7 @@ publishing {
                 def root = asNode()
                 root.appendNode('description', 'Gradle plugin that will contain everything to build, check and deploy to the right platform (HockeyApp, Play Store)')
                 root.appendNode('name', 'icapps-build-gradle-plugin')
-                root.appendNode('url', '')
+                root.appendNode('url', 'https://github.com/icapps/android_gradle_build')
                 root.children().last() + pomConfig
             }
         }
