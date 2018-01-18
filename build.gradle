@@ -1,0 +1,128 @@
+buildscript {
+    ext.kotlin_version = '1.2.10'
+
+    repositories {
+        mavenCentral()
+        jcenter()
+
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+}
+
+def artifactVersion = '1.0.0'
+def artifactGroup = 'com.icapps.build.gradle'
+group "$artifactGroup"
+version "$artifactVersion"
+
+//plugins
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'maven-publish'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from 'docs/README.txt'
+}
+
+repositories {
+    google()
+    mavenCentral()
+    jcenter()
+    maven { url "https://plugins.gradle.org/m2/" }
+}
+
+def translationsPlugin = '1.0.3'
+def detektPlugin = '1.0.0.RC6-2'
+def hockeyAppPlugin = '3.6'
+def playPublisherPlugin = '1.2.0'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    compile "com.chimerapps.gradle:icapps-translations-plugin:$translationsPlugin"
+    compile "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detektPlugin"
+    compile "de.felixschulze.gradle:gradle-hockeyapp-plugin:$hockeyAppPlugin"
+    compile "com.github.triplet.gradle:play-publisher:$playPublisherPlugin"
+
+    compileOnly 'com.android.tools.build:gradle:3.0.1'
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    pkg {
+        repo = 'maven'
+        name = 'icapps-build-gradle-plugin'
+        licenses = ['Apache-2.0']
+        vcsUrl = ''
+
+        version {
+            name = "$artifactVersion"
+            desc = "Gradle plugin for icapps build"
+            released = new Date()
+        }
+    }
+    publications = ['maven']
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            name "Koen Van Looveren"
+            email "koen.vanlooveren@icapps.com"
+            organization "iCapps"
+        }
+        developer {
+            name "Nicola Verbeeck"
+            email "nicola.verbeeck@icapps.com"
+            organization "iCapps"
+        }
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId "$artifactGroup"
+            artifactId 'plugin'
+            version "$artifactVersion"
+
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+            artifact javadocJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'Gradle plugin that will contain everything to build, check and deploy to the right platform (HockeyApp, Play Store)')
+                root.appendNode('name', 'icapps-build-gradle-plugin')
+                root.appendNode('url', '')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
