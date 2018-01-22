@@ -17,15 +17,34 @@ class BitBucketPullRequestPlugin : BuildSubPlugin {
             project.logger.debug("No Bitbucket block set in gradle. Bitbucket integration not be available for this project")
             return
         }
+        val bitbucketUrl = bitbucketConfig.url
+        val projectName = bitbucketConfig.projectName
+        val projectKey = bitbucketConfig.projectKey
+        val repoName = bitbucketConfig.repoName
+        val repoSlug = bitbucketConfig.repoSlug
 
-        if (bitbucketConfig.url == null)
+        if (bitbucketUrl == null)
             throw IllegalArgumentException("No Bitbucket Url set in gradle.")
-        else if (bitbucketConfig.projectName == null)
+
+        if (projectName == null)
             throw IllegalArgumentException("No Bitbucket ProjectName set in gradle.")
 
+        if (projectKey == null)
+            throw IllegalArgumentException("No Bitbucket ProjectKey set in gradle.")
+
+        if (repoName == null)
+            throw IllegalArgumentException("No Bitbucket RepoName set in gradle.")
+
+        if (repoSlug == null)
+            throw IllegalArgumentException("No Bitbucket RepoSlug set in gradle.")
+
         val openBitbucket = project.tasks.create(OPEN_BITBUCKET, BitbucketPrTask::class.java) {
-            it.url = bitbucketConfig.url
-            it.dependsOn("pullRequest")
+            it.url = bitbucketUrl
+            it.projectKey = projectKey
+            it.projectName = projectName
+            it.repoName = repoName
+            it.repoSlug = repoSlug
+            //it.dependsOn("pullRequest")
         }
         openBitbucket.group = GROUP_NAME
         openBitbucket.description = "Creates a pull request and will make sure your PR build has run successful."
