@@ -28,7 +28,7 @@ open class BitbucketPrTask : DefaultTask() {
         val token = System.getenv("GRADLE_PLUGIN_BITBUCKET_TOKEN") ?:
                 throw IllegalArgumentException("'GRADLE_PLUGIN_BITBUCKET_TOKEN' is not set. Please add your GRADLE_PLUGIN_BITBUCKET_TOKEN to your system.env. To make sure gradle can find your token. Restart your computer.")
 
-        if (GitHelper.branchExists(branchName)) {
+        if (GitHelper.branchNotExists(branchName)) {
             throw IllegalArgumentException("$branchName does not exists")
         }
 
@@ -45,15 +45,10 @@ open class BitbucketPrTask : DefaultTask() {
         val fromId = branchPrefix + currentBranch
         val toId = branchPrefix + branchName
 
-        val fromRef = Reference.create(fromId, MinimalRepository.create(repoSlug, null, ProjectKey.create(projectKey)), null, null)
-        val toRef = Reference.create(toId, MinimalRepository.create(repoSlug, null, ProjectKey.create(projectKey)), null, null)
-        val reviewers = mutableListOf<Person>()
-        reviewerList.forEach {
-
-        }
-        val links = Links.create(listOf(), listOf())
-        val pr = CreatePullRequest.create(prTitle, prDescription, fromRef, toRef, reviewers, links)
-        client.api().pullRequestApi().create(projectName, repoName, pr)
+        val fromRef = Reference.create(fromId, MinimalRepository.create(repoSlug, null, ProjectKey.create(projectKey)))
+        val toRef = Reference.create(toId, MinimalRepository.create(repoSlug, null, ProjectKey.create(projectKey)))
+        val pr = CreatePullRequest.create(prTitle, prDescription, fromRef, toRef, null, null)
+        val result = client.api().pullRequestApi().create(projectName, repoName, pr)
     }
 
     companion object {

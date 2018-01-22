@@ -3,6 +3,7 @@ package com.icapps.build.gradle.plugin.utils
 import joptsimple.internal.Strings
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.util.regex.Pattern
 
 /**
  * @author Koen Van Looveren
@@ -52,9 +53,13 @@ object GitHelper {
             output += line
         }
         input.close()
-        if(Strings.isNullOrEmpty(output)){
+        if (Strings.isNullOrEmpty(output)) {
             return false
         }
         return true
+    }
+
+    fun branchNotExists(branch: String): Boolean {
+        return !branchExists(branch)
     }
 }
