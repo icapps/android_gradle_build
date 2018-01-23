@@ -3,6 +3,7 @@ package com.icapps.build.gradle.plugin.utils
 import joptsimple.internal.Strings
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -61,5 +62,17 @@ object GitHelper {
 
     fun branchNotExists(branch: String): Boolean {
         return !branchExists(branch)
+    }
+
+    fun getLatestCommitMessages(): LinkedList<String> {
+        val messages = LinkedList<String>()
+        val rt = Runtime.getRuntime()
+        val pr = rt.exec("git log --pretty=format:\"%s\" --no-merges")
+        val input = BufferedReader(InputStreamReader(pr.inputStream))
+        for (line in input.lines()) {
+            messages.add(line)
+        }
+        input.close()
+        return messages
     }
 }

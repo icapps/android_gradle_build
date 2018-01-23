@@ -6,7 +6,7 @@ import com.icapps.build.gradle.plugin.tasks.bitbucket.BitbucketPrTask
 import org.gradle.api.Project
 
 /**
- * @author Nicola Verbeeck
+ * @author Koen Van Looveren
  */
 class BitBucketPullRequestPlugin : BuildSubPlugin {
 
@@ -17,32 +17,17 @@ class BitBucketPullRequestPlugin : BuildSubPlugin {
             project.logger.debug("No Bitbucket block set in gradle. Bitbucket integration not be available for this project")
             return
         }
-        val bitbucketUrl = bitbucketConfig.url
-        val projectName = bitbucketConfig.projectName
-        val projectKey = bitbucketConfig.projectKey
-        val repoName = bitbucketConfig.repoName
+        val user = bitbucketConfig.user
         val repoSlug = bitbucketConfig.repoSlug
 
-        if (bitbucketUrl == null)
-            throw IllegalArgumentException("No Bitbucket Url set in gradle.")
-
-        if (projectName == null)
-            throw IllegalArgumentException("No Bitbucket ProjectName set in gradle.")
-
-        if (projectKey == null)
-            throw IllegalArgumentException("No Bitbucket ProjectKey set in gradle.")
-
-        if (repoName == null)
-            throw IllegalArgumentException("No Bitbucket RepoName set in gradle.")
+        if (user == null)
+            throw IllegalArgumentException("No Bitbucket User set in gradle.")
 
         if (repoSlug == null)
             throw IllegalArgumentException("No Bitbucket RepoSlug set in gradle.")
 
         val openBitbucket = project.tasks.create(OPEN_BITBUCKET, BitbucketPrTask::class.java) {
-            it.url = bitbucketUrl
-            it.projectKey = projectKey
-            it.projectName = projectName
-            it.repoName = repoName
+            it.user = user
             it.repoSlug = repoSlug
             //it.dependsOn("pullRequest")
         }
