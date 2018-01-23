@@ -4,7 +4,6 @@ import joptsimple.internal.Strings
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.*
-import java.util.regex.Pattern
 
 /**
  * @author Koen Van Looveren
