@@ -14,29 +14,29 @@ import java.util.regex.Pattern
 object GitHelper {
 
     fun commit(message: String, vararg paths: String) {
-        ShellHelper.executeCommand("git add .")
-        ShellHelper.executeCommand("git commit -m $message")
+        ShellHelper.exec("git add .")
+        ShellHelper.exec("git commit -m $message")
     }
 
     fun ensureCleanRepo() {
-        val output = ShellHelper.executeCommand("git status --porcelain")
+        val output = ShellHelper.exec("git status --porcelain")
         if (!Strings.isNullOrEmpty(output))
             throw Exception("Make sure your git is clean")
     }
 
     fun pushToOrigin() {
-        ShellHelper.executeCommand("git push")
+        ShellHelper.exec("git push")
     }
 
     fun getCurrentBranchName(): String {
-        val branch = ShellHelper.executeCommand("git branch | grep \\*")
+        val branch = ShellHelper.exec("git branch | grep \\*")
         branch.replace("\\*", "")
         branch.replace("*", "")
         return branch
     }
 
     fun branchExists(branch: String): Boolean {
-        val output = ShellHelper.executeCommand("git show-ref refs/heads/" + branch)
+        val output = ShellHelper.exec("git show-ref refs/heads/" + branch)
         if (Strings.isNullOrEmpty(output)) {
             return false
         }
@@ -49,10 +49,8 @@ object GitHelper {
 
     fun getLatestCommitMessages(sinceBranch: String): LinkedList<String> {
         val messages = LinkedList<String>()
-        val rt = Runtime.getRuntime()
         val commitHash = getLatestCommitHash(sinceBranch)
-        val pr = rt.exec("git log $commitHash.. --pretty=format:\"%s\" --no-merges")
-        val input = BufferedReader(InputStreamReader(pr.inputStream))
+        val input = ShellHelper.execGitWithReader("git log $commitHash.. --pretty=format:\"%s\" --no-merges")
         for (line in input.lines()) {
             messages.add(line)
         }
@@ -61,12 +59,11 @@ object GitHelper {
     }
 
     private fun getLatestCommitHash(branch: String): String {
-        return ShellHelper.executeCommand("git log -n 1 $branch --pretty=format:\"%H\"")
+        return ShellHelper.exec("git log -n 1 $branch --pretty=format:\"%H\"")
     }
 
     fun getRepoSlug(): String {
-        val p = Runtime.getRuntime().exec("git remote show origin")
-        val reader = BufferedReader(InputStreamReader(p.inputStream))
+        val reader = ShellHelper.execGitWithReader("git remote show origin")
         val output = StringBuilder()
         for (line in reader.lines()) {
             output.append(line).append("\n")
