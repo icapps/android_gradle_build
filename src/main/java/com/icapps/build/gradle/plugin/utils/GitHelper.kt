@@ -1,9 +1,12 @@
 package com.icapps.build.gradle.plugin.utils
 
+import jdk.nashorn.tools.Shell
 import joptsimple.internal.Strings
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.*
+import java.util.regex.Pattern
+
 
 /**
  * @author Koen Van Looveren
@@ -16,14 +19,9 @@ object GitHelper {
     }
 
     fun ensureCleanRepo() {
-        val rt = Runtime.getRuntime()
-        val pr = rt.exec("git status --porcelain")
-        val input = BufferedReader(InputStreamReader(pr.inputStream))
-        if (input.readLine() != null) {
-            input.close()
+        val output = ShellHelper.executeCommand("git status --porcelain")
+        if (!Strings.isNullOrEmpty(output))
             throw Exception("Make sure your git is clean")
-        }
-        input.close()
     }
 
     fun pushToOrigin() {
@@ -31,28 +29,14 @@ object GitHelper {
     }
 
     fun getCurrentBranchName(): String {
-        val rt = Runtime.getRuntime()
-        val pr = rt.exec("git branch | grep \\*")
-        val input = BufferedReader(InputStreamReader(pr.inputStream))
-        var branch = ""
-        for (line in input.lines()) {
-            branch += line
-        }
+        val branch = ShellHelper.executeCommand("git branch | grep \\*")
         branch.replace("\\*", "")
         branch.replace("*", "")
-        input.close()
         return branch
     }
 
     fun branchExists(branch: String): Boolean {
-        val rt = Runtime.getRuntime()
-        val pr = rt.exec("git show-ref refs/heads/" + branch)
-        val input = BufferedReader(InputStreamReader(pr.inputStream))
-        var output = ""
-        for (line in input.lines()) {
-            output += line
-        }
-        input.close()
+        val output = ShellHelper.executeCommand("git show-ref refs/heads/" + branch)
         if (Strings.isNullOrEmpty(output)) {
             return false
         }
@@ -77,14 +61,24 @@ object GitHelper {
     }
 
     private fun getLatestCommitHash(branch: String): String {
-        val rt = Runtime.getRuntime()
-        val pr = rt.exec("git log -n 1 $branch --pretty=format:\"%H\"")
-        val input = BufferedReader(InputStreamReader(pr.inputStream))
+        return ShellHelper.executeCommand("git log -n 1 $branch --pretty=format:\"%H\"")
+    }
+
+    fun getRepoSlug(): String {
+        val p = Runtime.getRuntime().exec("git remote show origin")
+        val reader = BufferedReader(InputStreamReader(p.inputStream))
         val output = StringBuilder()
-        for (line in input.lines()) {
-            output.append(line)
+        for (line in reader.lines()) {
+            output.append(line).append("\n")
         }
-        input.close()
-        return output.toString()
+        reader.close()
+        val regex = "/(.*).git"
+        val pattern = Pattern.compile(regex)
+        val matcher = pattern.matcher(output.toString())
+        if (matcher.find()) {
+            return matcher.group(1)
+        } else {
+            throw RuntimeException("Could not parse your origin url.")
+        }
     }
 }

@@ -17,18 +17,8 @@ class BitBucketPullRequestPlugin : BuildSubPlugin {
             project.logger.debug("No Bitbucket block set in gradle. Bitbucket integration not be available for this project")
             return
         }
-        val user = bitbucketConfig.user
-        val repoSlug = bitbucketConfig.repoSlug
-
-        if (user == null)
-            throw IllegalArgumentException("No Bitbucket User set in gradle.")
-
-        if (repoSlug == null)
-            throw IllegalArgumentException("No Bitbucket RepoSlug set in gradle.")
 
         val openBitbucket = project.tasks.create(OPEN_BITBUCKET, BitbucketPrTask::class.java) {
-            it.user = user
-            it.repoSlug = repoSlug
             //it.dependsOn("pullRequest")
         }
         openBitbucket.group = GROUP_NAME

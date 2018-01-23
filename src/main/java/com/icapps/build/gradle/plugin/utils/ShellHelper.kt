@@ -8,13 +8,16 @@ import java.io.InputStreamReader
  */
 object ShellHelper {
 
-    fun executeCommand(command: String) {
+    fun executeCommand(command: String): String {
         val rt = Runtime.getRuntime()
         val pr = rt.exec(command)
         val input = BufferedReader(InputStreamReader(pr.inputStream))
+        val output = StringBuilder()
         for (line in input.lines()) {
             println(line)
+            output.append(line)
         }
         input.close()
+        return output.toString()
     }
 }

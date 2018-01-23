@@ -11,7 +11,6 @@ import java.util.stream.Collectors
 open class BitbucketPrTask : DefaultTask() {
 
     lateinit var user: String
-    lateinit var repoSlug: String
 
     //private lateinit var bitbucket: Bitbucket
 
@@ -28,6 +27,7 @@ open class BitbucketPrTask : DefaultTask() {
         }
 
         val currentBranch = GitHelper.getCurrentBranchName()
+        val repoSlug = GitHelper.getRepoSlug()
 
         val messages = GitHelper.getLatestCommitMessages(branchName)
 
@@ -36,11 +36,12 @@ open class BitbucketPrTask : DefaultTask() {
         } else {
             messages.first
         }
-        val prDescription = messages.joinToString("\n")
+        val prDescription = "Pull request generated with the Gradle Build Plugin $currentBranch => $branchName\n\n" +
+                messages.joinToString("\n")
         /*
         bitbucket = Bitbucket(username, token)
 
-        val defaultReviewers = getDefaultReviewers(username)
+        val defaultReviewers = getDefaultReviewers(username, repoSlug)
 
         val source = Destination(currentBranch)
         val destination = Destination(branchName)
@@ -56,26 +57,26 @@ open class BitbucketPrTask : DefaultTask() {
         }
         */
     }
-/*
-    private fun getDefaultReviewers(username: String): List<DefaultReviewer> {
-        val responseDefaultReviewers = bitbucket.getApi()
-                .getDefaultReviewers(user, repoSlug)
-                .execute()
 
-        val errorDefaultReviewers = responseDefaultReviewers.errorBody()
-        if (errorDefaultReviewers != null) {
-            throw RuntimeException("Default Reviewers Error:\n${errorDefaultReviewers.string()}")
-        }
+    /*
+        private fun getDefaultReviewers(username: String, repoSlug: String): List<DefaultReviewer> {
+            val responseDefaultReviewers = bitbucket.getApi()
+                    .getDefaultReviewers(user, repoSlug)
+                    .execute()
 
-        val defaultReviewers = responseDefaultReviewers.body()
-        return if (defaultReviewers == null || defaultReviewers.isEmpty()) {
-            mutableListOf<DefaultReviewer>()
-        } else {
-            defaultReviewers!!.getValues().filter { it.getUsername() != username }
+            val errorDefaultReviewers = responseDefaultReviewers.errorBody()
+            if (errorDefaultReviewers != null) {
+                throw RuntimeException("Default Reviewers Error:\n${errorDefaultReviewers.string()}")
+            }
+
+            val defaultReviewers = responseDefaultReviewers.body()
+            return if (defaultReviewers == null || defaultReviewers.isEmpty()) {
+                mutableListOf<DefaultReviewer>()
+            } else {
+                defaultReviewers!!.getValues().filter { it.getUsername() != username }
+            }
         }
-    }
     */
-
     companion object {
         val branchName: String = "develop"
     }
