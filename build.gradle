@@ -49,9 +49,6 @@ def translationsPlugin = '1.0.3'
 def detektPlugin = '1.0.0.RC6-2'
 def hockeyAppPlugin = '3.6'
 def playPublisherPlugin = '1.2.0'
-def bitbucketPlugin = '2.0.0'
-
-def junit = '4.12'
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
@@ -61,11 +58,7 @@ dependencies {
     compile "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detektPlugin"
     compile "de.felixschulze.gradle:gradle-hockeyapp-plugin:$hockeyAppPlugin"
     compile "com.github.triplet.gradle:play-publisher:$playPublisherPlugin"
-    compile "com.cdancy:bitbucket-rest:$bitbucketPlugin"
-
     compileOnly 'com.android.tools.build:gradle:3.0.1'
-
-    testCompile "junit:junit:$junit"
 }
 
 bintray {
