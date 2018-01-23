@@ -14,29 +14,29 @@ import java.util.regex.Pattern
 object GitHelper {
 
     fun commit(message: String, vararg paths: String) {
-        ShellHelper.exec("git add .")
-        ShellHelper.exec("git commit -m $message")
+        ShellHelper.execGit("git add .")
+        ShellHelper.execGit("git commit -m $message")
     }
 
     fun ensureCleanRepo() {
-        val output = ShellHelper.exec("git status --porcelain")
+        val output = ShellHelper.execGit("git status --porcelain")
         if (!Strings.isNullOrEmpty(output))
             throw Exception("Make sure your git is clean")
     }
 
     fun pushToOrigin() {
-        ShellHelper.exec("git push")
+        ShellHelper.execGit("git push")
     }
 
     fun getCurrentBranchName(): String {
-        val branch = ShellHelper.exec("git branch | grep \\*")
+        val branch = ShellHelper.execGit("git branch | grep \\*")
         branch.replace("\\*", "")
         branch.replace("*", "")
         return branch
     }
 
     fun branchExists(branch: String): Boolean {
-        val output = ShellHelper.exec("git show-ref refs/heads/" + branch)
+        val output = ShellHelper.execGit("git show-ref refs/heads/" + branch)
         if (Strings.isNullOrEmpty(output)) {
             return false
         }
@@ -59,7 +59,7 @@ object GitHelper {
     }
 
     private fun getLatestCommitHash(branch: String): String {
-        return ShellHelper.exec("git log -n 1 $branch --pretty=format:\"%H\"")
+        return ShellHelper.execGit("git log -n 1 $branch --pretty=format:\"%H\"")
     }
 
     fun getRepoSlug(): String {

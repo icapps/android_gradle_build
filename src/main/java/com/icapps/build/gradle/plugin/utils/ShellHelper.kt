@@ -16,7 +16,7 @@ object ShellHelper {
         val output = getOutput(which)
         if (Strings.isNullOrEmpty(output.toString()))
             throw RuntimeException("Git is not installed")
-        val gitPath = File(output.toString())
+        val gitPath = File(output)
         val process = rt.exec(command, null, gitPath)
         return getOutput(process)
     }
