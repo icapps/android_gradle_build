@@ -1,12 +1,5 @@
 package com.icapps.build.gradle.plugin.tasks.bitbucket
 
-import com.cdancy.bitbucket.rest.BitbucketClient
-import com.cdancy.bitbucket.rest.domain.common.Links
-import com.cdancy.bitbucket.rest.domain.pullrequest.MinimalRepository
-import com.cdancy.bitbucket.rest.domain.pullrequest.Person
-import com.cdancy.bitbucket.rest.domain.pullrequest.ProjectKey
-import com.cdancy.bitbucket.rest.domain.pullrequest.Reference
-import com.cdancy.bitbucket.rest.options.CreatePullRequest
 import com.icapps.build.gradle.plugin.utils.GitHelper
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
@@ -32,11 +25,6 @@ open class BitbucketPrTask : DefaultTask() {
             throw IllegalArgumentException("$branchName does not exists")
         }
 
-        val client = BitbucketClient.builder()
-                .endPoint(url)
-                .token(token)
-                .build()
-
         val currentBranch = GitHelper.getCurrentBranchName()
 
         val prTitle = "Test From Gradle Plugin" // eerst commit die afwijkt van branch waar ge in wilt mergen
@@ -44,11 +32,6 @@ open class BitbucketPrTask : DefaultTask() {
 
         val fromId = branchPrefix + currentBranch
         val toId = branchPrefix + branchName
-
-        val fromRef = Reference.create(fromId, MinimalRepository.create(repoSlug, null, ProjectKey.create(projectKey)))
-        val toRef = Reference.create(toId, MinimalRepository.create(repoSlug, null, ProjectKey.create(projectKey)))
-        val pr = CreatePullRequest.create(prTitle, prDescription, fromRef, toRef, null, null)
-        val result = client.api().pullRequestApi().create(projectName, repoName, pr)
     }
 
     companion object {
