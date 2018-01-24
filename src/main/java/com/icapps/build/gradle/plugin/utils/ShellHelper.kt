@@ -45,8 +45,9 @@ object ShellHelper {
     }
 
     fun execGitWithReader(command: String): BufferedReader {
-        val rt = Runtime.getRuntime()
-        val process = rt.exec(command)
+        val gitLocation = getGitLocation()
+        val cleanCommand = command.replace("git ", "$gitLocation ")
+        val process = Runtime.getRuntime().exec(cleanCommand)
         return BufferedReader(InputStreamReader(process.inputStream))
     }
 
@@ -66,7 +67,6 @@ object ShellHelper {
         val reader = BufferedReader(InputStreamReader(which.inputStream))
         val output = StringBuilder()
         for (line in reader.lines()) {
-            println(line)
             output.append(line)
         }
         reader.close()

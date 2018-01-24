@@ -3,6 +3,7 @@ package com.icapps.build.gradle.plugin.plugins.codequality
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
 import com.icapps.build.gradle.plugin.tasks.bitbucket.BitbucketPrTask
+import joptsimple.internal.Strings
 import org.gradle.api.Project
 
 /**
@@ -18,7 +19,12 @@ class BitBucketPullRequestPlugin : BuildSubPlugin {
             return
         }
 
+        if (Strings.isNullOrEmpty(bitbucketConfig.user)) {
+            throw IllegalArgumentException("No User provided in gradle. Bitbucket integration could not be configured correctly.")
+        }
         val openBitbucket = project.tasks.create(OPEN_BITBUCKET, BitbucketPrTask::class.java) {
+            it.user = bitbucketConfig.user
+            it.prBranch = bitbucketConfig.prBranch ?: "develop"
             //it.dependsOn("pullRequest")
         }
         openBitbucket.group = GROUP_NAME

@@ -1,9 +1,6 @@
 package com.icapps.build.gradle.plugin.utils
 
-import jdk.nashorn.tools.Shell
 import joptsimple.internal.Strings
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.util.*
 import java.util.regex.Pattern
 
@@ -29,10 +26,20 @@ object GitHelper {
     }
 
     fun getCurrentBranchName(): String {
-        val branch = ShellHelper.execGit("git branch | grep \\*")
-        branch.replace("\\*", "")
-        branch.replace("*", "")
-        return branch
+        val reader = ShellHelper.execGitWithReader("git branch")
+        val output = StringBuilder()
+        for (line in reader.lines()) {
+            output.append(line).append("\n")
+        }
+        reader.close()
+        val regex = "\\* (.*)"
+        val pattern = Pattern.compile(regex)
+        val matcher = pattern.matcher(output.toString())
+        if (matcher.find()) {
+            return matcher.group(1)
+        } else {
+            throw RuntimeException("Could not parse your origin url.")
+        }
     }
 
     fun branchExists(branch: String): Boolean {
@@ -50,7 +57,7 @@ object GitHelper {
     fun getLatestCommitMessages(sinceBranch: String): LinkedList<String> {
         val messages = LinkedList<String>()
         val commitHash = getLatestCommitHash(sinceBranch)
-        val input = ShellHelper.execGitWithReader("git log $commitHash.. --pretty=format:\"%s\" --no-merges")
+        val input = ShellHelper.execGitWithReader("git log $commitHash.. --pretty=format:%s --no-merges")
         for (line in input.lines()) {
             messages.add(line)
         }
@@ -59,7 +66,7 @@ object GitHelper {
     }
 
     private fun getLatestCommitHash(branch: String): String {
-        return ShellHelper.execGit("git log -n 1 $branch --pretty=format:\"%H\"")
+        return ShellHelper.execGit("git log -n 1 $branch --pretty=format:%H")
     }
 
     fun getRepoSlug(): String {

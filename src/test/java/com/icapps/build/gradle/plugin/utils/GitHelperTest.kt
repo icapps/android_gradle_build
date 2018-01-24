@@ -16,4 +16,16 @@ class GitHelperTest {
         val result = GitHelper.branchExists("not-existing-branch")
         assertFalse(result)
     }
+
+    @Test
+    fun testCurrentBranch() {
+        val result = GitHelper.getCurrentBranchName()
+        assertEquals("feature/bitbucket-integration", result)
+    }
+
+    @Test
+    fun testLatestMessages() {
+        val result = GitHelper.getLatestCommitMessages("master")
+        assertEquals(17, result.size)
+    }
 }
