@@ -1,6 +1,7 @@
 package com.icapps.build.gradle.plugin.utils
 
 import joptsimple.internal.Strings
+import org.gradle.internal.os.OperatingSystem
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -18,11 +19,28 @@ object ShellHelper {
     }
 
     private fun getGitLocation(): String {
-        val rt = Runtime.getRuntime()
-        val which = rt.exec("which git")
-        val output = getOutput(which)
+        if (OperatingSystem.current().isWindows) {
+            return getGitLocationWindows()
+        }
+        return getGitLocationLinuxOrMac()
+    }
+
+    private fun getGitLocationLinuxOrMac(): String {
+        val output = exec("which git")
         if (Strings.isNullOrEmpty(output))
-            throw RuntimeException("Git is not installed")
+            throw RuntimeException("Git is not installed on your machine")
+        return output
+    }
+
+    private fun getGitLocationWindows(): String {
+        System.getenv("PATH").split(";")
+                .map { it + "\\git.exe" }
+                .filter { File(it).exists() }
+                .forEach { return it }
+
+        val output = exec("where git")
+        if (Strings.isNullOrEmpty(output))
+            throw RuntimeException("Git is not installed on your machine")
         return output
     }
 

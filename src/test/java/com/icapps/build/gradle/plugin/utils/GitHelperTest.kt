@@ -16,9 +16,4 @@ class GitHelperTest {
         val result = GitHelper.branchExists("not-existing-branch")
         assertFalse(result)
     }
-
-    @Test
-    fun testFalse() {
-        assertFalse(false)
-    }
 }
