@@ -43,6 +43,7 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url "https://plugins.gradle.org/m2/" }
+    maven { url "https://dl.bintray.com/nicolaverbeeck/maven" }
 }
 
 def bitbucketCloudApi = '0.1.0'
