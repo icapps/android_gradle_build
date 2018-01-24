@@ -11,14 +11,19 @@ import java.io.InputStreamReader
 object ShellHelper {
 
     fun execGit(command: String): String {
+        val gitLocation = getGitLocation()
+        val cleanCommand = command.replace("git ", "$gitLocation ")
+        val process = Runtime.getRuntime().exec(cleanCommand)
+        return getOutput(process)
+    }
+
+    private fun getGitLocation(): String {
         val rt = Runtime.getRuntime()
         val which = rt.exec("which git")
         val output = getOutput(which)
-        if (Strings.isNullOrEmpty(output.toString()))
+        if (Strings.isNullOrEmpty(output))
             throw RuntimeException("Git is not installed")
-        val gitPath = File(output)
-        val process = rt.exec(command, null, gitPath)
-        return getOutput(process)
+        return output
     }
 
     fun execGitWithReader(command: String): BufferedReader {

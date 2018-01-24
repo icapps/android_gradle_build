@@ -59,6 +59,8 @@ dependencies {
     compile "de.felixschulze.gradle:gradle-hockeyapp-plugin:$hockeyAppPlugin"
     compile "com.github.triplet.gradle:play-publisher:$playPublisherPlugin"
     compileOnly 'com.android.tools.build:gradle:3.0.1'
+
+    testCompile "junit:junit:4.11"
 }
 
 bintray {
