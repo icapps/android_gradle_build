@@ -46,7 +46,7 @@ repositories {
     maven { url "https://dl.bintray.com/nicolaverbeeck/maven" }
 }
 
-def bitbucketCloudApi = '0.1.0'
+def bitbucketCloudApi = '0.1.1'
 def translationsPlugin = '1.0.3'
 def detektPlugin = '1.0.0.RC6-2'
 def hockeyAppPlugin = '3.6'

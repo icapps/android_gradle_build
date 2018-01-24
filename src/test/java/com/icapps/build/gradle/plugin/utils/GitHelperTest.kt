@@ -26,6 +26,6 @@ class GitHelperTest {
     @Test
     fun testLatestMessages() {
         val result = GitHelper.getLatestCommitMessages("master")
-        assertEquals(17, result.size)
+        assertEquals(20, result.size)
     }
 }

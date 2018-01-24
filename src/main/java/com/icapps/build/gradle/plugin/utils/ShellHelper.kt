@@ -11,63 +11,61 @@ import java.io.InputStreamReader
  */
 object ShellHelper {
 
-    fun execGit(command: String): String {
-        val gitLocation = getGitLocation()
-        val cleanCommand = command.replace("git ", "$gitLocation ")
-        val process = Runtime.getRuntime().exec(cleanCommand)
-        return getOutput(process)
+    private const val PATH_KEY = "PATH"
+
+    fun execWithReader(command: String): BufferedReader {
+        val executable = getExecutable(command)
+        val gitLocation = getCommandLocation(executable)
+        val cleanCommand = command.replaceFirst(executable, gitLocation)
+        return executeWithReader(cleanCommand)
     }
 
-    private fun getGitLocation(): String {
-        if (OperatingSystem.current().isWindows) {
-            return getGitLocationWindows()
+    fun exec(command: String, newLine: Boolean = false): String {
+        val reader = execWithReader(command)
+        return getOutput(reader, newLine)
+    }
+
+    private fun getExecutable(command: String): String {
+        return command.split(" ").firstOrNull()
+                ?: throw RuntimeException("Could not execute command: '$command'")
+    }
+
+    private fun getCommandLocation(executable: String): String {
+        val command = if (OperatingSystem.current().isWindows) {
+            "where $executable"
+        } else {
+            "which $executable"
         }
-        return getGitLocationLinuxOrMac()
-    }
 
-    private fun getGitLocationLinuxOrMac(): String {
-        val output = exec("which git")
-        if (Strings.isNullOrEmpty(output))
-            throw RuntimeException("Git is not installed on your machine")
-        return output
-    }
+        val output = execute(command, false)
+        if (!Strings.isNullOrEmpty(output))
+            return output
 
-    private fun getGitLocationWindows(): String {
-        System.getenv("PATH").split(";")
-                .map { it + "\\git.exe" }
+        System.getenv(PATH_KEY).split(File.pathSeparator)
+                .map { it + File.separator + executable }
                 .filter { File(it).exists() }
                 .forEach { return it }
 
-        val output = exec("where git")
-        if (Strings.isNullOrEmpty(output))
-            throw RuntimeException("Git is not installed on your machine")
-        return output
+        return executable
     }
 
-    fun execGitWithReader(command: String): BufferedReader {
-        val gitLocation = getGitLocation()
-        val cleanCommand = command.replace("git ", "$gitLocation ")
-        val process = Runtime.getRuntime().exec(cleanCommand)
+    private fun execute(command: String, newLine: Boolean): String {
+        val process = Runtime.getRuntime().exec(command)
+        val reader = BufferedReader(InputStreamReader(process.inputStream))
+        return getOutput(reader, newLine)
+    }
+
+    private fun executeWithReader(command: String): BufferedReader {
+        val process = Runtime.getRuntime().exec(command)
         return BufferedReader(InputStreamReader(process.inputStream))
     }
 
-    fun exec(command: String): String {
-        val rt = Runtime.getRuntime()
-        val process = rt.exec(command)
-        return getOutput(process)
-    }
-
-    fun execWithReader(command: String): BufferedReader {
-        val rt = Runtime.getRuntime()
-        val process = rt.exec(command)
-        return BufferedReader(InputStreamReader(process.inputStream))
-    }
-
-    private fun getOutput(which: Process): String {
-        val reader = BufferedReader(InputStreamReader(which.inputStream))
+    private fun getOutput(reader: BufferedReader, newLine: Boolean): String {
         val output = StringBuilder()
         for (line in reader.lines()) {
             output.append(line)
+            if (newLine)
+                output.append("\n")
         }
         reader.close()
         return output.toString()
