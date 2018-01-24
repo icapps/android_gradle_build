@@ -10,6 +10,7 @@ Import in root gradle
         repositories {
             ...
         	maven { url "https://dl.bintray.com/icapps/maven" }
+            maven { url "https://dl.bintray.com/nicolaverbeeck/maven" }
             ...
         }
         dependencies {

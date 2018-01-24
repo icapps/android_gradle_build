@@ -43,23 +43,29 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url "https://plugins.gradle.org/m2/" }
+    maven { url "https://dl.bintray.com/nicolaverbeeck/maven" }
 }
 
+def bitbucketCloudApi = '0.1.1'
 def translationsPlugin = '1.0.3'
 def detektPlugin = '1.0.0.RC6-2'
 def hockeyAppPlugin = '3.6'
 def playPublisherPlugin = '1.2.0'
+def androidBuildTools = '3.0.1'
+def junit = '4.11'
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
+    compile "com.chimerapps:bitbucketcloud-api:$bitbucketCloudApi"
     compile "com.chimerapps.gradle:icapps-translations-plugin:$translationsPlugin"
     compile "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detektPlugin"
     compile "de.felixschulze.gradle:gradle-hockeyapp-plugin:$hockeyAppPlugin"
     compile "com.github.triplet.gradle:play-publisher:$playPublisherPlugin"
+    compileOnly "com.android.tools.build:gradle:$androidBuildTools"
 
-    compileOnly 'com.android.tools.build:gradle:3.0.1'
+    testCompile "junit:junit:$junit"
 }
 
 bintray {

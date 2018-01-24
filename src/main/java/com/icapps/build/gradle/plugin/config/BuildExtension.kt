@@ -16,6 +16,7 @@ open class BuildExtension(private val project: Project) {
     var detektConfig: DetektExtension? = null
     var playConfig: PlayPublisherPluginExtension? = null
     var prConfig: PullRequestConfiguration? = PullRequestConfiguration()
+    var bitbucketConfig: BitbucketPullRequestConfiguration? = null
     var hockeyConfig: HockeyAppPluginExtension? = null
 
     open fun playStore(configuration: Action<in PlayPublisherPluginExtension>) {
@@ -24,6 +25,10 @@ open class BuildExtension(private val project: Project) {
 
     open fun pr(configuration: Action<in PullRequestConfiguration>) {
         prConfig = PullRequestConfiguration().apply { configuration.execute(this) }
+    }
+
+    open fun bitbucket(configuration: Action<in BitbucketPullRequestConfiguration>) {
+        bitbucketConfig = BitbucketPullRequestConfiguration().apply { configuration.execute(this) }
     }
 
     open fun translations(configuration: Action<in DownloadTranslationsExtension>) {
