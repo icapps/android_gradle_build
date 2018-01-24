@@ -21,7 +21,7 @@ class PullRequestPlugin : BuildSubPlugin {
             return
         }
 
-        val task = project.tasks.create("pullRequest") { task ->
+        val task = project.tasks.create(TASK_PULL_REQUEST) { task ->
             if (prConfig.detekt && configuration.detektConfig != null)
                 task.dependsOn("detektCheck")
             if (prConfig.lint)
@@ -76,5 +76,9 @@ class PullRequestPlugin : BuildSubPlugin {
         }
 
         throw IllegalStateException("Cannot determine variant for part of PR, specify it manually using '$debugName'")
+    }
+
+    companion object {
+        private const val TASK_PULL_REQUEST = "pullRequest"
     }
 }
