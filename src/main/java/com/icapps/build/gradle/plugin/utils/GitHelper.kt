@@ -4,15 +4,14 @@ import joptsimple.internal.Strings
 import java.util.*
 import java.util.regex.Pattern
 
-
 /**
  * @author Koen Van Looveren
  */
 object GitHelper {
 
-    fun commit(message: String, vararg paths: String) {
+    fun commit(message: String) {
         ShellHelper.exec("git add .")
-        ShellHelper.exec("git commit -m $message")
+        ShellHelper.exec("git commit -m \"$message\"")
     }
 
     fun ensureCleanRepo() {
@@ -26,10 +25,10 @@ object GitHelper {
     }
 
     fun getCurrentBranchName(): String {
-        val output = ShellHelper.exec("git branch", true)
+        val output = ShellHelper.exec("git branch", newLine = true)
         val regex = "\\* (.*)"
         val pattern = Pattern.compile(regex)
-        val matcher = pattern.matcher(output.toString())
+        val matcher = pattern.matcher(output)
         if (matcher.find()) {
             return matcher.group(1)
         } else {
@@ -65,7 +64,7 @@ object GitHelper {
     }
 
     fun getRepoSlug(): String {
-        val output = ShellHelper.exec("git remote show origin", true)
+        val output = ShellHelper.exec("git remote show origin", newLine = true)
         val regex = "/(.*).git"
         val pattern = Pattern.compile(regex)
         val matcher = pattern.matcher(output)

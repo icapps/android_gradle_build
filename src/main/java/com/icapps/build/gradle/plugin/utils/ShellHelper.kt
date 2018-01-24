@@ -26,15 +26,20 @@ object ShellHelper {
     }
 
     private fun getExecutable(command: String): String {
-        return command.split(" ").firstOrNull()
-                ?: throw RuntimeException("Could not execute command: '$command'")
+        val firstSpace = command.indexOf(' ')
+        return command.substring(0, firstSpace)
     }
 
     private fun getCommandLocation(executable: String): String {
-        val command = if (OperatingSystem.current().isWindows) {
-            "where $executable"
+        val osSpecificExecutable = if (OperatingSystem.current().isWindows) {
+            "$executable.exe"
         } else {
-            "which $executable"
+            executable
+        }
+        val command = if (OperatingSystem.current().isWindows) {
+            "where $osSpecificExecutable"
+        } else {
+            "which $osSpecificExecutable"
         }
 
         val output = execute(command, false)
@@ -42,9 +47,10 @@ object ShellHelper {
             return output
 
         System.getenv(PATH_KEY).split(File.pathSeparator)
-                .map { it + File.separator + executable }
-                .filter { File(it).exists() }
-                .forEach { return it }
+                .map { it + File.separator + osSpecificExecutable }
+                .map { File(it) }
+                .filter { it.exists() && it.canExecute() }
+                .forEach { return it.path }
 
         return executable
     }
