@@ -38,8 +38,8 @@ open class BuildPlugin : Plugin<Project> {
         val extension = project.extensions.create(CONFIG_NAME, BuildExtension::class.java, project)
 
         project.gradle.startParameter.taskNames.forEach {
-            if (it.startsWith("upload") && it.endsWith("ToHockeyApp")) {
-                val name = it.removeFirst("upload").removeLast("ToHockeyApp")
+            val name = it.removeFirst("upload").removeLast("ToHockeyApp")
+            if (it.startsWith("upload") && it.endsWith("ToHockeyApp") && name.isNotEmpty()) {
                 val list = VersionBumpHelper.versionBump(name)
                 list.forEach {
                     project.setProperty(it.first, it.second.toString())
