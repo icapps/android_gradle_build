@@ -2,9 +2,12 @@ package com.icapps.build.gradle.plugin.plugins.deploy
 
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
+import com.icapps.build.gradle.plugin.tasks.versionbump.VersionBumpTask
+import com.icapps.build.gradle.plugin.utils.VersionBumpHelper
+import com.icapps.build.gradle.plugin.utils.removeFirst
+import com.icapps.build.gradle.plugin.utils.removeLast
 import de.felixschulze.gradle.HockeyAppPlugin
 import de.felixschulze.gradle.HockeyAppPluginExtension
-import de.felixschulze.gradle.HockeyAppUploadTask
 import org.gradle.api.Project
 
 /**
@@ -14,6 +17,19 @@ class DeployToHockeyPlugin : BuildSubPlugin {
 
     override fun init(project: Project) {
         project.plugins.apply(HockeyAppPlugin::class.java)
+        project.tasks.filter { it.group == HockeyAppPlugin.getGROUP_NAME() }
+                .forEach {
+                    it.doFirst {
+                        val name = it.name.removeFirst("upload").removeLast("ToHockeyApp")
+                        val versionBump = VersionBumpTask()
+                        versionBump.flavorName = name
+                        versionBump.versionBump()
+                    }
+
+                    it.doLast {
+                        VersionBumpHelper.resetBuildNr()
+                    }
+                }
     }
 
     override fun configure(project: Project, configuration: BuildExtension) {
@@ -35,14 +51,14 @@ class DeployToHockeyPlugin : BuildSubPlugin {
         hockeyConfig.symbolsDirectory = config.symbolsDirectory
         hockeyConfig.apiToken = config.apiToken
         hockeyConfig.variantToApiToken = config.variantToApiToken
-        hockeyConfig.notes = config.notes ?: "No release notes given."
+        hockeyConfig.notes = config.notes
         hockeyConfig.variantToNotes = config.variantToNotes
-        hockeyConfig.status = config.status ?: "2"
-        hockeyConfig.notify = config.notify ?: "1"
+        hockeyConfig.status = config.status
+        hockeyConfig.notify = config.notify
         hockeyConfig.variantToNotify = config.variantToNotify
-        hockeyConfig.notesType = config.notesType ?: "1"
+        hockeyConfig.notesType = config.notesType
         hockeyConfig.variantToNotesType = config.variantToNotesType
-        hockeyConfig.releaseType = config.releaseType ?: "0"
+        hockeyConfig.releaseType = config.releaseType
         hockeyConfig.variantToReleaseType = config.variantToReleaseType
         hockeyConfig.appFileNameRegex = config.appFileNameRegex
         hockeyConfig.mappingFileNameRegex = config.mappingFileNameRegex
