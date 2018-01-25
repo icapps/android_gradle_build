@@ -55,15 +55,19 @@ object ShellHelper {
         return executable
     }
 
-    private fun execute(command: String, newLine: Boolean): String {
+    private fun getProcess(command: String): Process {
         val process = Runtime.getRuntime().exec(command)
-        val reader = BufferedReader(InputStreamReader(process.inputStream))
+        process.waitFor()
+        return process
+    }
+
+    private fun execute(command: String, newLine: Boolean): String {
+        val reader = BufferedReader(InputStreamReader(getProcess(command).inputStream))
         return getOutput(reader, newLine)
     }
 
     private fun executeWithReader(command: String): BufferedReader {
-        val process = Runtime.getRuntime().exec(command)
-        return BufferedReader(InputStreamReader(process.inputStream))
+        return BufferedReader(InputStreamReader(getProcess(command).inputStream))
     }
 
     private fun getOutput(reader: BufferedReader, newLine: Boolean): String {

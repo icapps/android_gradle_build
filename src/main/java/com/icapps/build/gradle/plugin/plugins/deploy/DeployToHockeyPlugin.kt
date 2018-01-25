@@ -2,7 +2,7 @@ package com.icapps.build.gradle.plugin.plugins.deploy
 
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
-import com.icapps.build.gradle.plugin.tasks.versionbump.VersionBumpTask
+import com.icapps.build.gradle.plugin.utils.GitHelper
 import com.icapps.build.gradle.plugin.utils.VersionBumpHelper
 import com.icapps.build.gradle.plugin.utils.removeFirst
 import com.icapps.build.gradle.plugin.utils.removeLast
@@ -21,13 +21,19 @@ class DeployToHockeyPlugin : BuildSubPlugin {
                 .forEach {
                     it.doFirst {
                         val name = it.name.removeFirst("upload").removeLast("ToHockeyApp")
-                        val versionBump = VersionBumpTask()
-                        versionBump.flavorName = name
-                        versionBump.versionBump()
+                        GitHelper.ensureCleanRepo()
+                        VersionBumpHelper.versionBump(name)
+
+                        val hockeyConfig = project.extensions.getByType(HockeyAppPluginExtension::class.java)
+                        hockeyConfig.notify = "1"
+                        hockeyConfig.notes = "THESE NOTES WERE GIVEN IN THE DO FIRST"
                     }
 
                     it.doLast {
+                        val name = it.name.removeFirst("upload").removeLast("ToHockeyApp")
                         VersionBumpHelper.resetBuildNr()
+                        GitHelper.commit("Version Bump - ${name.capitalize()}")
+                        GitHelper.pushToOrigin()
                     }
                 }
     }

@@ -25,7 +25,7 @@ class BitBucketPullRequestPlugin : BuildSubPlugin {
         val openBitbucket = project.tasks.create(OPEN_BITBUCKET, BitbucketPrTask::class.java) {
             it.user = bitbucketConfig.user
             it.prBranch = bitbucketConfig.prBranch ?: "develop"
-            it.dependsOn("pullRequest")
+            //it.dependsOn("pullRequest")
         }
         openBitbucket.group = GROUP_NAME
         openBitbucket.description = "Creates a pull request and will make sure your PR build has run successful."

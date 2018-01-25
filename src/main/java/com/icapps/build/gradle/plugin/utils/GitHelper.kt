@@ -10,14 +10,17 @@ import java.util.regex.Pattern
 object GitHelper {
 
     fun commit(message: String) {
-        ShellHelper.exec("git add .")
-        ShellHelper.exec("git commit -m \"$message\"")
+        val output1 = ShellHelper.exec("git add .")
+        println("OUTPUT ADD: $output1")
+        Thread.sleep(1000)
+        val output2 = ShellHelper.exec("git commit -m \"$message\"")
+        println("OUTPUT git commit -m \"$message\": $output2")
     }
 
     fun ensureCleanRepo() {
         val output = ShellHelper.exec("git status --porcelain")
         if (!Strings.isNullOrEmpty(output))
-            throw Exception("Make sure your git is clean")
+            throw RuntimeException("Make sure your git is clean")
     }
 
     fun pushToOrigin() {

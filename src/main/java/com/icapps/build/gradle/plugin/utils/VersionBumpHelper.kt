@@ -44,7 +44,7 @@ object VersionBumpHelper {
 
     private fun saveProperties(properties: PropertiesHelper) {
         val output = FileOutputStream(GRADLE_PROPERTIES_FILE)
-        properties.store(output, "Auto Generated from iCapps Build Gradle Plugin")
+        properties.store(output)
         output.close()
     }
 }
