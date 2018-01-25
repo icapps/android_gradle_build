@@ -89,16 +89,16 @@ class DeployToHockeyPlugin : BuildSubPlugin {
     }
 
     private fun getReleaseNotes(project: Project): String {
-        val fromEnv = System.getenv(ENV_HOCKEY_RELEASE_NOTES)
-        val lastSuccess = System.getenv(ENV_GIT_PREV_SUCCES_COMMIT)
-        val notes = when {
+        val fromEnv: String? = System.getenv(ENV_HOCKEY_RELEASE_NOTES)
+        val lastSuccess: String? = System.getenv(ENV_GIT_PREV_SUCCES_COMMIT)
+        val notes: String = when {
             project.hasProperty(PROPERTY_NOTES) -> project.property(PROPERTY_NOTES).toString()
-            isNotNullOrEmpty(fromEnv) -> fromEnv
+            isNotNullOrEmpty(fromEnv) -> fromEnv ?: "No release notes were given."
             else -> {
                 val reader = if (isNotNullOrEmpty(lastSuccess)) {
-                    ShellHelper.execWithReader("git log $lastSuccess..HEAD --pretty=format:'%s' --no-merges")
+                    ShellHelper.execWithReader(arrayOf("git", "log", "$lastSuccess..HEAD", "--pretty=format:%s", "--no-merges"))
                 } else {
-                    ShellHelper.execWithReader("git log --all --pretty=format:'%s' --no-merges")
+                    ShellHelper.execWithReader(arrayOf("git", "log", "--all", "--pretty=format:%s", "--no-merges"))
                 }
                 val stringBuilder = StringBuilder()
                 reader.readLines()

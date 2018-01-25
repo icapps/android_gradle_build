@@ -1,7 +1,6 @@
 package com.icapps.build.gradle.plugin.utils
 
 import joptsimple.internal.Strings
-import javax.annotation.Nullable
 
 /**
  * @author Koen Van Looveren
@@ -40,6 +39,6 @@ inline fun String.removeLast(stringToRemove: String): String {
     return this.replaceLast(stringToRemove, "")
 }
 
-fun isNotNullOrEmpty(@Nullable string: String): Boolean {
+fun isNotNullOrEmpty(string: String?): Boolean {
     return !Strings.isNullOrEmpty(string)
 }

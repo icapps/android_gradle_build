@@ -13,21 +13,15 @@ object ShellHelper {
 
     private const val PATH_KEY = "PATH"
 
-    fun execWithReader(command: String): BufferedReader {
-        val executable = getExecutable(command)
-        val gitLocation = getCommandLocation(executable)
-        val cleanCommand = command.replaceFirst(executable, gitLocation)
-        return executeWithReader(cleanCommand)
+    fun execWithReader(command: Array<String>): BufferedReader {
+        val location = getCommandLocation(command[0])
+        command[0] = location
+        return executeWithReader(command)
     }
 
-    fun exec(command: String, newLine: Boolean = false): String {
+    fun exec(command: Array<String>, newLine: Boolean = false): String {
         val reader = execWithReader(command)
         return getOutput(reader, newLine)
-    }
-
-    private fun getExecutable(command: String): String {
-        val firstSpace = command.indexOf(' ')
-        return command.substring(0, firstSpace)
     }
 
     private fun getCommandLocation(executable: String): String {
@@ -37,9 +31,9 @@ object ShellHelper {
             executable
         }
         val command = if (OperatingSystem.current().isWindows) {
-            "where $osSpecificExecutable"
+            arrayOf("where", osSpecificExecutable)
         } else {
-            "which $osSpecificExecutable"
+            arrayOf("which", osSpecificExecutable)
         }
 
         val output = execute(command, false)
@@ -55,19 +49,22 @@ object ShellHelper {
         return executable
     }
 
-    private fun getProcess(command: String): Process {
-        val process = Runtime.getRuntime().exec(command)
-        process.waitFor()
-        return process
+    private fun getProcess(command: Array<String>): Process {
+        return Runtime.getRuntime()
+                .exec(command)
     }
 
-    private fun execute(command: String, newLine: Boolean): String {
-        val reader = BufferedReader(InputStreamReader(getProcess(command).inputStream))
+    private fun execute(command: Array<String>, newLine: Boolean): String {
+        val process = getProcess(command)
+        printError(process, command)
+        val reader = BufferedReader(InputStreamReader(process.inputStream))
         return getOutput(reader, newLine)
     }
 
-    private fun executeWithReader(command: String): BufferedReader {
-        return BufferedReader(InputStreamReader(getProcess(command).inputStream))
+    private fun executeWithReader(command: Array<String>): BufferedReader {
+        val process = getProcess(command)
+        printError(process, command)
+        return BufferedReader(InputStreamReader(process.inputStream))
     }
 
     private fun getOutput(reader: BufferedReader, newLine: Boolean): String {
@@ -79,5 +76,16 @@ object ShellHelper {
         }
         reader.close()
         return output.toString()
+    }
+
+    private fun printError(process: Process, command: Array<String>) {
+        val reader = BufferedReader(InputStreamReader(process.errorStream))
+        val output = getOutput(reader, true)
+        val commandString = command.joinToString(" ")
+        if (output.isNotEmpty()) {
+            println("===========ERROR==:==$commandString=============")
+            println(output)
+            println("------------------------------------------")
+        }
     }
 }
