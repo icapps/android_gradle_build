@@ -20,7 +20,7 @@ class GitHelperTest {
     @Test
     fun testCurrentBranch() {
         val result = GitHelper.getCurrentBranchName()
-        assertEquals("feature/hockey-release-notes", result)
+        assertEquals("master", result)
     }
 
     @Test
