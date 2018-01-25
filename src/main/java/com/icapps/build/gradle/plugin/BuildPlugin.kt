@@ -40,7 +40,11 @@ open class BuildPlugin : Plugin<Project> {
         project.gradle.startParameter.taskNames.forEach {
             if (it.startsWith("upload") && it.endsWith("ToHockeyApp")) {
                 val name = it.removeFirst("upload").removeLast("ToHockeyApp")
-                VersionBumpHelper.versionBump(name)
+                val list = VersionBumpHelper.versionBump(name)
+                list.forEach {
+                    project.setProperty(it.first, it.second.toString())
+                    project.rootProject.setProperty(it.first, it.second.toString())
+                }
             }
         }
 

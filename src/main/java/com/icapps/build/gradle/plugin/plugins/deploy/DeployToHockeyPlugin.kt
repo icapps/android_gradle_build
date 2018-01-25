@@ -3,6 +3,7 @@ package com.icapps.build.gradle.plugin.plugins.deploy
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
 import com.icapps.build.gradle.plugin.utils.GitHelper
+import com.icapps.build.gradle.plugin.utils.VersionBumpHelper
 import com.icapps.build.gradle.plugin.utils.removeFirst
 import com.icapps.build.gradle.plugin.utils.removeLast
 import de.felixschulze.gradle.HockeyAppPlugin
@@ -28,7 +29,9 @@ class DeployToHockeyPlugin : BuildSubPlugin {
 
                     it.doLast {
                         val name = it.name.removeFirst("upload").removeLast("ToHockeyApp")
-                        //VersionBumpHelper.resetBuildNr()
+                        val result = VersionBumpHelper.resetBuildNr()
+                        project.setProperty(result.first, result.second.toString())
+                        project.rootProject.setProperty(result.first, result.second.toString())
                         GitHelper.addAndCommit("Version Bump - ${name.capitalize()}")
                         GitHelper.pushToOrigin()
                     }

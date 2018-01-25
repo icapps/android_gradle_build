@@ -9,6 +9,8 @@ import java.io.FileOutputStream
 object VersionBumpHelper {
     private const val GRADLE_PROPERTIES_FILE = "gradle.properties"
 
+    private const val buildNrKey = "buildNr"
+
     /**
      * Will update the buildNr of the buildVariant passed as param.
      * The updated buildVariant buildNr will be used to set
@@ -20,26 +22,35 @@ object VersionBumpHelper {
      *
      * @param name is the buildVariantName
      */
-    fun versionBump(name: String) {
+    fun versionBump(name: String): List<Pair<String, Int>> {
         val input = FileInputStream(GRADLE_PROPERTIES_FILE)
         val prop = PropertiesHelper()
         prop.load(input)
 
-        val buildNr = prop.getProperty("build${name.capitalize()}Nr", "0").toInt() + 1
-        prop.setProperty("build${name.capitalize()}Nr", buildNr.toString())
-        prop.setProperty("buildNr", buildNr.toString())
+        val specificBuildNrKey = "build${name.capitalize()}Nr"
+
+        val buildNr = prop.getProperty(specificBuildNrKey, "0").toInt() + 1
+        prop.setProperty(specificBuildNrKey, buildNr.toString())
+        prop.setProperty(buildNrKey, buildNr.toString())
         input.close()
 
         saveProperties(prop)
+        val list = mutableListOf<Pair<String, Int>>()
+        list.add(Pair(specificBuildNrKey, buildNr))
+        list.add(Pair(buildNrKey, buildNr))
+        return list
     }
 
-    fun resetBuildNr() {
+    fun resetBuildNr(): Pair<String, Int> {
         val input = FileInputStream(GRADLE_PROPERTIES_FILE)
         val prop = PropertiesHelper()
         prop.load(input)
-        prop.setProperty("buildNr", "1")
+        prop.setProperty(buildNrKey, "1")
         input.close()
         saveProperties(prop)
+        val list = mutableListOf<Pair<String, Int>>()
+        return Pair(buildNrKey, 1)
+
     }
 
     private fun saveProperties(properties: PropertiesHelper) {
