@@ -38,9 +38,13 @@ open class BuildPlugin : Plugin<Project> {
         val extension = project.extensions.create(CONFIG_NAME, BuildExtension::class.java, project)
 
         project.gradle.startParameter.taskNames.forEach {
-            val name = it.removeFirst("upload").removeLast("ToHockeyApp")
-            if (it.startsWith("upload") && it.endsWith("ToHockeyApp") && name.isNotEmpty()) {
-                val list = VersionBumpHelper.versionBump(name)
+            if (it.startsWith("upload") && it.endsWith("ToHockeyApp")) {
+                val name = it.removeFirst("upload").removeLast("ToHockeyApp")
+                val list = if (name.isNotEmpty()) {
+                    VersionBumpHelper.versionBump(name)
+                } else {
+                    VersionBumpHelper.versionBump()
+                }
                 list.forEach {
                     project.setProperty(it.first, it.second.toString())
                     project.rootProject.setProperty(it.first, it.second.toString())

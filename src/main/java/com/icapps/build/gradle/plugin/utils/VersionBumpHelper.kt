@@ -33,11 +33,30 @@ object VersionBumpHelper {
         prop.setProperty(specificBuildNrKey, buildNr.toString())
         prop.setProperty(buildNrKey, buildNr.toString())
         input.close()
-
         saveProperties(prop)
+
         val list = mutableListOf<Pair<String, Int>>()
         list.add(Pair(specificBuildNrKey, buildNr))
         list.add(Pair(buildNrKey, buildNr))
+        return list
+    }
+
+    fun versionBump(): List<Pair<String, Int>> {
+        val input = FileInputStream(GRADLE_PROPERTIES_FILE)
+        val prop = PropertiesHelper()
+        prop.load(input)
+        val list = mutableListOf<Pair<String, Int>>()
+        prop.filter { it.key.toString().startsWith("build") && it.key.toString().endsWith("Nr") }
+                .forEach {
+                    val buildNr = it.value.toString().toInt() + 1
+                    prop.setProperty(it.key.toString(), buildNr.toString())
+                    list.add(Pair(it.key.toString(), buildNr))
+                }
+        input.close()
+        prop.setProperty(buildNrKey, "1")
+        saveProperties(prop)
+
+        list.add(Pair(buildNrKey, 1))
         return list
     }
 
