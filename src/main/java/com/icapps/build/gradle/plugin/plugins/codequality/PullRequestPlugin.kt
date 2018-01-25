@@ -21,7 +21,7 @@ class PullRequestPlugin : BuildSubPlugin {
             return
         }
 
-        val task = project.tasks.create(TASK_PULL_REQUEST) { task ->
+        val task = project.tasks.create(PULL_REQUEST_TASK) { task ->
             if (prConfig.detekt && configuration.detektConfig != null)
                 task.dependsOn("detektCheck")
             if (prConfig.lint)
@@ -79,6 +79,6 @@ class PullRequestPlugin : BuildSubPlugin {
     }
 
     companion object {
-        private const val TASK_PULL_REQUEST = "pullRequest"
+        const val PULL_REQUEST_TASK = "pullRequest"
     }
 }

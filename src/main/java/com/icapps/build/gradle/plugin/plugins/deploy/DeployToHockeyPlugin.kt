@@ -2,6 +2,8 @@ package com.icapps.build.gradle.plugin.plugins.deploy
 
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
+import com.icapps.build.gradle.plugin.plugins.codequality.PullRequestPlugin
+import com.icapps.build.gradle.plugin.plugins.status.GitStatusPlugin
 import com.icapps.build.gradle.plugin.utils.GitHelper
 import com.icapps.build.gradle.plugin.utils.VersionBumpHelper
 import com.icapps.build.gradle.plugin.utils.removeFirst
@@ -19,9 +21,11 @@ class DeployToHockeyPlugin : BuildSubPlugin {
         project.plugins.apply(HockeyAppPlugin::class.java)
         project.tasks.filter { it.group == HockeyAppPlugin.getGROUP_NAME() }
                 .forEach {
+                    it.dependsOn(GitStatusPlugin.CLEAN_GIT_TASK)
+                    it.dependsOn(PullRequestPlugin.PULL_REQUEST_TASK)
                     it.doFirst {
+                        println("DO FIRST")
                         val name = it.name.removeFirst("upload").removeLast("ToHockeyApp")
-                        GitHelper.ensureCleanRepo()
                         VersionBumpHelper.versionBump(name)
 
                         val hockeyConfig = project.extensions.getByType(HockeyAppPluginExtension::class.java)
@@ -30,9 +34,10 @@ class DeployToHockeyPlugin : BuildSubPlugin {
                     }
 
                     it.doLast {
+                        println("DO LAST")
                         val name = it.name.removeFirst("upload").removeLast("ToHockeyApp")
                         VersionBumpHelper.resetBuildNr()
-                        GitHelper.commit("Version Bump - ${name.capitalize()}")
+                        GitHelper.addAndCommit("Version Bump - ${name.capitalize()}")
                         GitHelper.pushToOrigin()
                     }
                 }

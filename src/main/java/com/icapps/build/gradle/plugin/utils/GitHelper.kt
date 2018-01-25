@@ -9,12 +9,17 @@ import java.util.regex.Pattern
  */
 object GitHelper {
 
+    fun add() {
+        ShellHelper.exec("git add .")
+    }
+
     fun commit(message: String) {
-        val output1 = ShellHelper.exec("git add .")
-        println("OUTPUT ADD: $output1")
-        Thread.sleep(1000)
-        val output2 = ShellHelper.exec("git commit -m \"$message\"")
-        println("OUTPUT git commit -m \"$message\": $output2")
+        ShellHelper.exec("git commit -m \"$message\"")
+    }
+
+    fun addAndCommit(message: String) {
+        add()
+        commit(message)
     }
 
     fun ensureCleanRepo() {

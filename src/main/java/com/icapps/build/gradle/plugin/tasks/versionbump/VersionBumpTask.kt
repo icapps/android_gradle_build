@@ -17,7 +17,7 @@ open class VersionBumpTask : DefaultTask() {
     fun versionBump() {
         VersionBumpHelper.versionBump(flavorName)
         if (commit) {
-            GitHelper.commit("Version Bump - ${flavorName.capitalize()}")
+            GitHelper.addAndCommit("Version Bump - ${flavorName.capitalize()}")
             GitHelper.pushToOrigin()
         }
     }

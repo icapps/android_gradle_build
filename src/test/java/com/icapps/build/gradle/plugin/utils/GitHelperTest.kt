@@ -28,9 +28,4 @@ class GitHelperTest {
         val result = GitHelper.getLatestCommitMessages("master")
         assertTrue(result.isNotEmpty())
     }
-
-    @Test
-    fun testCommit() {
-        GitHelper.commit("Commit from test")
-    }
 }

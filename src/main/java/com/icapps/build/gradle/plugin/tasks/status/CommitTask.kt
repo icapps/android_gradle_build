@@ -13,7 +13,7 @@ open class CommitTask : DefaultTask() {
 
     @TaskAction
     fun commitAndPush() {
-        GitHelper.commit(message)
+        GitHelper.addAndCommit(message)
         GitHelper.pushToOrigin()
     }
 

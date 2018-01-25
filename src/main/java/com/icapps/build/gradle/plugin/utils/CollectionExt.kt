@@ -23,7 +23,7 @@ inline fun <T> MutableCollection<T>.addAll(vararg items: T): MutableCollection<T
 @Suppress("NOTHING_TO_INLINE")
 inline fun String.replaceLast(oldValue: String, newValue: String): String {
     val stringBuilder = StringBuilder(this)
-    stringBuilder.replace(this.lastIndexOf(oldValue), oldValue.length, newValue)
+    stringBuilder.replace(this.lastIndexOf(oldValue), this.lastIndexOf(oldValue) + oldValue.length, newValue)
     return stringBuilder.toString()
 }
 
