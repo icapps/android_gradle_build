@@ -10,6 +10,9 @@ import com.icapps.build.gradle.plugin.plugins.deploy.DeployToPlayStorePlugin
 import com.icapps.build.gradle.plugin.plugins.status.GitStatusPlugin
 import com.icapps.build.gradle.plugin.plugins.translations.TranslationsPlugin
 import com.icapps.build.gradle.plugin.plugins.versionbump.VersionBumpPlugin
+import com.icapps.build.gradle.plugin.utils.VersionBumpHelper
+import com.icapps.build.gradle.plugin.utils.removeFirst
+import com.icapps.build.gradle.plugin.utils.removeLast
 import com.icapps.build.gradle.plugin.utils.replaceAll
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -33,6 +36,14 @@ open class BuildPlugin : Plugin<Project> {
                 deployToPlayStorePlugin)
 
         val extension = project.extensions.create(CONFIG_NAME, BuildExtension::class.java, project)
+
+        project.gradle.startParameter.taskNames.forEach {
+            if (it.startsWith("upload") && it.endsWith("ToHockeyApp")) {
+                val name = it.removeFirst("upload").removeLast("ToHockeyApp")
+                VersionBumpHelper.versionBump(name)
+            }
+        }
+
         project.afterEvaluate {
             subPlugins.forEach { it.configure(project, extension) }
         }
