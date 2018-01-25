@@ -2,10 +2,7 @@ package com.icapps.build.gradle.plugin.plugins.deploy
 
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
-import com.icapps.build.gradle.plugin.utils.GitHelper
-import com.icapps.build.gradle.plugin.utils.VersionBumpHelper
-import com.icapps.build.gradle.plugin.utils.removeFirst
-import com.icapps.build.gradle.plugin.utils.removeLast
+import com.icapps.build.gradle.plugin.utils.*
 import de.felixschulze.gradle.HockeyAppPlugin
 import de.felixschulze.gradle.HockeyAppPluginExtension
 import org.gradle.api.Project
@@ -14,6 +11,13 @@ import org.gradle.api.Project
  * @author Nicola Verbeeck
  */
 class DeployToHockeyPlugin : BuildSubPlugin {
+
+    companion object {
+        const val RELEASE_NOTES_MAX_LENGTH = 5000
+        const val PROPERTY_NOTES = "notes"
+        const val ENV_HOCKEY_RELEASE_NOTES = "HOCKEY_RELEASE_NOTES"
+        const val ENV_GIT_PREV_SUCCES_COMMIT = "GIT_PREVIOUS_SUCCESSFUL_COMMIT"
+    }
 
     override fun init(project: Project) {
         project.plugins.apply(HockeyAppPlugin::class.java)
@@ -24,7 +28,7 @@ class DeployToHockeyPlugin : BuildSubPlugin {
                     it.doFirst {
                         val hockeyConfig = project.extensions.getByType(HockeyAppPluginExtension::class.java)
                         hockeyConfig.notify = "1"
-                        hockeyConfig.notes = "THESE NOTES WERE GIVEN IN THE DO FIRST"
+                        hockeyConfig.notes = getReleaseNotes(project)
                     }
 
                     it.doLast {
@@ -84,4 +88,25 @@ class DeployToHockeyPlugin : BuildSubPlugin {
         hockeyConfig.hockeyApiUrl = config.hockeyApiUrl
     }
 
+    private fun getReleaseNotes(project: Project): String {
+        val fromEnv = System.getenv(ENV_HOCKEY_RELEASE_NOTES)
+        val lastSuccess = System.getenv(ENV_GIT_PREV_SUCCES_COMMIT)
+        val notes = when {
+            project.hasProperty(PROPERTY_NOTES) -> project.property(PROPERTY_NOTES).toString()
+            isNotNullOrEmpty(fromEnv) -> fromEnv
+            else -> {
+                val reader = if (isNotNullOrEmpty(lastSuccess)) {
+                    ShellHelper.execWithReader("git log $lastSuccess..HEAD --pretty=format:'%s' --no-merges")
+                } else {
+                    ShellHelper.execWithReader("git log --all --pretty=format:'%s' --no-merges")
+                }
+                val stringBuilder = StringBuilder()
+                reader.readLines()
+                        .filter { it.isNotEmpty() }
+                        .forEach { stringBuilder.append("* ").append(it).append("\n") }
+                stringBuilder.toString()
+            }
+        }
+        return notes.substring(0, Math.min(notes.length, RELEASE_NOTES_MAX_LENGTH))
+    }
 }
