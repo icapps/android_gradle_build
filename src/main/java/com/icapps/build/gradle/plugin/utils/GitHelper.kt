@@ -46,10 +46,7 @@ object GitHelper {
 
     fun branchExists(branch: String): Boolean {
         val output = ShellHelper.exec(arrayOf("git", "show-ref", "refs/heads/" + branch))
-        if (Strings.isNullOrEmpty(output)) {
-            return false
-        }
-        return true
+        return !Strings.isNullOrEmpty(output)
     }
 
     fun branchNotExists(branch: String): Boolean {

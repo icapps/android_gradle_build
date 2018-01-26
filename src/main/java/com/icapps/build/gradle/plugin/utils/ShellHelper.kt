@@ -30,18 +30,25 @@ object ShellHelper {
         } else {
             executable
         }
-        val command = if (OperatingSystem.current().isWindows) {
-            arrayOf("where", osSpecificExecutable)
-        } else {
-            arrayOf("which", osSpecificExecutable)
+
+        val location = getCommandLocationFromEnv(osSpecificExecutable)
+        if (osSpecificExecutable == location) {
+            val command = if (OperatingSystem.current().isWindows) {
+                arrayOf(getCommandLocationFromEnv("where"), osSpecificExecutable)
+            } else {
+                arrayOf(getCommandLocationFromEnv("which"), osSpecificExecutable)
+            }
+
+            val output = execute(command, false)
+            if (!Strings.isNullOrEmpty(output))
+                return output
         }
+        return location
+    }
 
-        val output = execute(command, false)
-        if (!Strings.isNullOrEmpty(output))
-            return output
-
+    private fun getCommandLocationFromEnv(executable: String): String {
         System.getenv(PATH_KEY).split(File.pathSeparator)
-                .map { it + File.separator + osSpecificExecutable }
+                .map { it + File.separator + executable }
                 .map { File(it) }
                 .filter { it.exists() && it.canExecute() }
                 .forEach { return it.path }
@@ -50,8 +57,10 @@ object ShellHelper {
     }
 
     private fun getProcess(command: Array<String>): Process {
-        return Runtime.getRuntime()
-                .exec(command)
+        return ProcessBuilder()
+                .redirectErrorStream(true)
+                .command(command.toList())
+                .start()
     }
 
     private fun execute(command: Array<String>, newLine: Boolean): String {
