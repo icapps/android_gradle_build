@@ -33,7 +33,7 @@ object GitHelper {
     }
 
     fun getCurrentBranchName(): String {
-        val output = ShellHelper.exec(arrayOf("git", "branch"), true)
+        val output = ShellHelper.exec(arrayOf("git", "branch"), newLine = true)
         val regex = "\\* (.*)"
         val pattern = Pattern.compile(regex)
         val matcher = pattern.matcher(output)
