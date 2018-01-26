@@ -44,17 +44,31 @@ open class BuildPlugin : Plugin<Project> {
 
         val extension = project.extensions.create(CONFIG_NAME, BuildExtension::class.java, project)
 
+        var versionBump = false
         project.gradle.startParameter.taskNames.forEach {
             if (it.startsWith("upload") && it.endsWith("ToHockeyApp")) {
                 val name = it.removeFirst("upload").removeLast("ToHockeyApp")
                 val list = if (name.isNotEmpty()) {
                     VersionBumpHelper.versionBump(name)
                 } else {
+                    if (!project.hasProperty("buildNrName")){
+                        throw RuntimeException("$it need to specify the 'branchNrName' as a param")
+                    }
                     VersionBumpHelper.versionBump()
                 }
                 list.forEach {
                     project.setProperty(it.first, it.second.toString())
                     project.rootProject.setProperty(it.first, it.second.toString())
+                }
+
+                if (project.hasProperty("buildNrName") && !versionBump) {
+                    versionBump = true
+                    val bump = VersionBumpHelper.versionBump(project.property("buildNrName").toString())
+
+                    bump.forEach {
+                        project.setProperty(it.first, it.second.toString())
+                        project.rootProject.setProperty(it.first, it.second.toString())
+                    }
                 }
             }
         }
@@ -62,8 +76,11 @@ open class BuildPlugin : Plugin<Project> {
         VersionBumpHelper.init()
 
         project.afterEvaluate {
+            if (project.hasProperty("buildNrName")) {
+                VersionBumpHelper.init(project.property("buildNrName").toString())
+            }
             val variants = project.extensions.findByType(AppExtension::class.java).applicationVariants
-            VersionBumpHelper.init(variants)
+            VersionBumpHelper.init(variants.map { it.name })
 
             subPlugins.forEach { it.configure(project, extension) }
         }
