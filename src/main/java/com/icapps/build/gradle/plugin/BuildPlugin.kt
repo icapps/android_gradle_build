@@ -1,5 +1,7 @@
 package com.icapps.build.gradle.plugin
 
+import com.android.build.gradle.AppExtension
+import com.android.build.gradle.AppPlugin
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
 import com.icapps.build.gradle.plugin.plugins.codequality.BitBucketPullRequestPlugin
@@ -25,6 +27,10 @@ open class BuildPlugin : Plugin<Project> {
     private val subPlugins = mutableListOf<BuildSubPlugin>()
 
     override fun apply(project: Project) {
+        if (!project.plugins.hasPlugin(AppPlugin::class.java)) {
+            project.logger.debug("This plugin is made for Android Projects. The Android Plugin needs to be applied before this plugin.")
+            return
+        }
         val deployToPlayStorePlugin = DeployToPlayStorePlugin()
         val translations = TranslationsPlugin()
         subPlugins.replaceAll(translations,
@@ -53,7 +59,12 @@ open class BuildPlugin : Plugin<Project> {
             }
         }
 
+        VersionBumpHelper.init()
+
         project.afterEvaluate {
+            val variants = project.extensions.findByType(AppExtension::class.java).applicationVariants
+            VersionBumpHelper.init(variants)
+
             subPlugins.forEach { it.configure(project, extension) }
         }
         translations.init(project)

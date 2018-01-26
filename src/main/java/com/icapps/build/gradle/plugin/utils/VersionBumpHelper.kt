@@ -1,5 +1,7 @@
 package com.icapps.build.gradle.plugin.utils
 
+import com.android.build.gradle.api.ApplicationVariant
+import org.gradle.api.DomainObjectSet
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
@@ -67,9 +69,29 @@ object VersionBumpHelper {
         prop.setProperty(buildNrKey, "1")
         input.close()
         saveProperties(prop)
-        val list = mutableListOf<Pair<String, Int>>()
         return Pair(buildNrKey, 1)
+    }
 
+    fun init() {
+        init(null)
+    }
+
+    fun init(flavorName: DomainObjectSet<ApplicationVariant>?) {
+        val input = FileInputStream(GRADLE_PROPERTIES_FILE)
+        val prop = PropertiesHelper()
+        prop.load(input)
+
+        flavorName?.forEach {
+            val key = "build${it.name.capitalize()}Nr"
+            if (!prop.contains(key))
+                prop.setProperty(key, "1")
+        }
+
+        if (!prop.contains("buildNr"))
+            prop.setProperty("buildNr", "1")
+
+        input.close()
+        saveProperties(prop)
     }
 
     private fun saveProperties(properties: PropertiesHelper) {

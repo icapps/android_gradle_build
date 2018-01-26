@@ -16,6 +16,15 @@ open class VersionBumpTask : DefaultTask() {
     @TaskAction
     fun versionBump() {
         VersionBumpHelper.versionBump(flavorName)
+        val list = if (flavorName.isNotEmpty()) {
+            VersionBumpHelper.versionBump(flavorName)
+        } else {
+            VersionBumpHelper.versionBump()
+        }
+        list.forEach {
+            project.setProperty(it.first, it.second.toString())
+            project.rootProject.setProperty(it.first, it.second.toString())
+        }
         if (commit) {
             GitHelper.addAndCommit("Version Bump - ${flavorName.capitalize()}")
             GitHelper.pushToOrigin()
