@@ -2,6 +2,7 @@ package com.icapps.build.gradle.plugin.plugins.deploy
 
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
+import com.icapps.build.gradle.plugin.plugins.codequality.PullRequestPlugin
 import com.icapps.build.gradle.plugin.utils.*
 import de.felixschulze.gradle.HockeyAppPlugin
 import de.felixschulze.gradle.HockeyAppPluginExtension
@@ -23,8 +24,7 @@ class DeployToHockeyPlugin : BuildSubPlugin {
         project.plugins.apply(HockeyAppPlugin::class.java)
         project.tasks.filter { it.group == HockeyAppPlugin.getGROUP_NAME() }
                 .forEach {
-                    //it.dependsOn(GitStatusPlugin.CLEAN_GIT_TASK)
-                    //it.dependsOn(PullRequestPlugin.PULL_REQUEST_TASK)
+                    it.dependsOn(PullRequestPlugin.PULL_REQUEST_TASK)
                     it.doFirst {
                         val hockeyConfig = project.extensions.getByType(HockeyAppPluginExtension::class.java)
                         hockeyConfig.notify = "1"

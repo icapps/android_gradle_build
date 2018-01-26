@@ -3,9 +3,9 @@ package com.icapps.build.gradle.plugin.plugins.versionbump
 import com.android.build.gradle.AppExtension
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
+import com.icapps.build.gradle.plugin.tasks.status.CheckCleanRepoTask
 import com.icapps.build.gradle.plugin.tasks.status.CommitTask
 import com.icapps.build.gradle.plugin.tasks.versionbump.VersionBumpTask
-import com.icapps.build.gradle.plugin.utils.GitHelper
 import org.gradle.api.Project
 
 /**
@@ -51,7 +51,7 @@ class VersionBumpPlugin : BuildSubPlugin {
             val aggregate = project.tasks.create("versionBump${buildType.name.capitalize()}") { task ->
 
                 task.doFirst {
-                    GitHelper.ensureCleanRepo()
+                    CheckCleanRepoTask().apply {  }.checkCleanRepo()
 
                     tasks[buildType.name]?.forEach {
                         it.versionBump()

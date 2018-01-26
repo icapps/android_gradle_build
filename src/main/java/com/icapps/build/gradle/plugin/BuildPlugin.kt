@@ -26,7 +26,8 @@ open class BuildPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         val deployToPlayStorePlugin = DeployToPlayStorePlugin()
-        subPlugins.replaceAll(TranslationsPlugin(),
+        val translations = TranslationsPlugin()
+        subPlugins.replaceAll(translations,
                 GitStatusPlugin(),
                 VersionBumpPlugin(),
                 DetektPlugin(),
@@ -55,6 +56,7 @@ open class BuildPlugin : Plugin<Project> {
         project.afterEvaluate {
             subPlugins.forEach { it.configure(project, extension) }
         }
+        translations.init(project)
         deployToPlayStorePlugin.init(project)
     }
 

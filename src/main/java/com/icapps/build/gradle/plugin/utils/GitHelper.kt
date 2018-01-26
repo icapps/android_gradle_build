@@ -25,7 +25,7 @@ object GitHelper {
     fun ensureCleanRepo() {
         val output = ShellHelper.exec(arrayOf("git", "status", "--porcelain"))
         if (!Strings.isNullOrEmpty(output))
-            throw RuntimeException("Make sure your git is clean")
+            throw RuntimeException("Make sure your git repo is clean")
     }
 
     fun pushToOrigin() {
