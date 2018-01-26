@@ -83,11 +83,11 @@ object VersionBumpHelper {
 
         flavorName?.forEach {
             val key = "build${it.name.capitalize()}Nr"
-            if (!prop.contains(key))
+            if (!prop.containsKey(key))
                 prop.setProperty(key, "1")
         }
 
-        if (!prop.contains("buildNr"))
+        if (!prop.containsKey("buildNr"))
             prop.setProperty("buildNr", "1")
 
         input.close()
