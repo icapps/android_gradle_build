@@ -7,10 +7,10 @@ import org.gradle.api.tasks.TaskAction
 /**
  * @author Nicola Verbeeck
  */
-open class CheckCleanGitTask : DefaultTask() {
+open class CheckCleanRepoTask : DefaultTask() {
 
     @TaskAction
-    fun checkGitClean() {
+    fun checkCleanRepo() {
         GitHelper.ensureCleanRepo()
     }
 

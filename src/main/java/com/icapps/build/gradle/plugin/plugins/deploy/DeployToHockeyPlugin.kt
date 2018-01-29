@@ -2,9 +2,10 @@ package com.icapps.build.gradle.plugin.plugins.deploy
 
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
+import com.icapps.build.gradle.plugin.plugins.codequality.PullRequestPlugin
+import com.icapps.build.gradle.plugin.utils.*
 import de.felixschulze.gradle.HockeyAppPlugin
 import de.felixschulze.gradle.HockeyAppPluginExtension
-import de.felixschulze.gradle.HockeyAppUploadTask
 import org.gradle.api.Project
 
 /**
@@ -12,8 +13,33 @@ import org.gradle.api.Project
  */
 class DeployToHockeyPlugin : BuildSubPlugin {
 
+    companion object {
+        const val RELEASE_NOTES_MAX_LENGTH = 5000
+        const val PROPERTY_NOTES = "notes"
+        const val ENV_HOCKEY_RELEASE_NOTES = "HOCKEY_RELEASE_NOTES"
+        const val ENV_GIT_PREV_SUCCES_COMMIT = "GIT_PREVIOUS_SUCCESSFUL_COMMIT"
+    }
+
     override fun init(project: Project) {
         project.plugins.apply(HockeyAppPlugin::class.java)
+        project.tasks.filter { it.group == HockeyAppPlugin.getGROUP_NAME() }
+                .forEach {
+                    it.dependsOn(PullRequestPlugin.PULL_REQUEST_TASK)
+                    it.doFirst {
+                        val hockeyConfig = project.extensions.getByType(HockeyAppPluginExtension::class.java)
+                        hockeyConfig.notify = "1"
+                        hockeyConfig.notes = getReleaseNotes(project)
+                    }
+
+                    it.doLast {
+                        val name = it.name.removeFirst("upload").removeLast("ToHockeyApp")
+                        val result = VersionBumpHelper.resetBuildNr()
+                        project.setProperty(result.first, result.second.toString())
+                        project.rootProject.setProperty(result.first, result.second.toString())
+                        GitHelper.addAndCommit("Version Bump - ${name.capitalize()}")
+                        GitHelper.pushToOrigin()
+                    }
+                }
     }
 
     override fun configure(project: Project, configuration: BuildExtension) {
@@ -35,14 +61,14 @@ class DeployToHockeyPlugin : BuildSubPlugin {
         hockeyConfig.symbolsDirectory = config.symbolsDirectory
         hockeyConfig.apiToken = config.apiToken
         hockeyConfig.variantToApiToken = config.variantToApiToken
-        hockeyConfig.notes = config.notes ?: "No release notes given."
+        hockeyConfig.notes = config.notes
         hockeyConfig.variantToNotes = config.variantToNotes
-        hockeyConfig.status = config.status ?: "2"
-        hockeyConfig.notify = config.notify ?: "1"
+        hockeyConfig.status = config.status
+        hockeyConfig.notify = config.notify
         hockeyConfig.variantToNotify = config.variantToNotify
-        hockeyConfig.notesType = config.notesType ?: "1"
+        hockeyConfig.notesType = config.notesType
         hockeyConfig.variantToNotesType = config.variantToNotesType
-        hockeyConfig.releaseType = config.releaseType ?: "0"
+        hockeyConfig.releaseType = config.releaseType
         hockeyConfig.variantToReleaseType = config.variantToReleaseType
         hockeyConfig.appFileNameRegex = config.appFileNameRegex
         hockeyConfig.mappingFileNameRegex = config.mappingFileNameRegex
@@ -62,4 +88,25 @@ class DeployToHockeyPlugin : BuildSubPlugin {
         hockeyConfig.hockeyApiUrl = config.hockeyApiUrl
     }
 
+    private fun getReleaseNotes(project: Project): String {
+        val fromEnv: String? = System.getenv(ENV_HOCKEY_RELEASE_NOTES)
+        val lastSuccess: String? = System.getenv(ENV_GIT_PREV_SUCCES_COMMIT)
+        val notes: String = when {
+            project.hasProperty(PROPERTY_NOTES) -> project.property(PROPERTY_NOTES).toString()
+            isNotNullOrEmpty(fromEnv) -> fromEnv ?: "No release notes were given."
+            else -> {
+                val reader = if (isNotNullOrEmpty(lastSuccess)) {
+                    ShellHelper.execWithReader(listOf("git", "log", "$lastSuccess..HEAD", "--pretty=format:%s", "--no-merges"))
+                } else {
+                    ShellHelper.execWithReader(listOf("git", "log", "--all", "--pretty=format:%s", "--no-merges"))
+                }
+                val stringBuilder = StringBuilder()
+                reader.readLines()
+                        .filter { it.isNotEmpty() }
+                        .forEach { stringBuilder.append("* ").append(it).append("\n") }
+                stringBuilder.toString()
+            }
+        }
+        return notes.substring(0, Math.min(notes.length, RELEASE_NOTES_MAX_LENGTH))
+    }
 }

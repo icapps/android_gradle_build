@@ -29,7 +29,7 @@ class DeployToPlayStorePlugin : BuildSubPlugin {
         }
 
         if (config.jsonFile != null) {
-            throw IllegalArgumentException("JsonFile is not safe. User a pk12File instead.")
+            throw IllegalArgumentException("JsonFile is not safe. Use a pk12File instead.")
         }
 
 

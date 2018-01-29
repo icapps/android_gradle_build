@@ -3,10 +3,9 @@ package com.icapps.build.gradle.plugin.plugins.versionbump
 import com.android.build.gradle.AppExtension
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
+import com.icapps.build.gradle.plugin.tasks.status.CheckCleanRepoTask
 import com.icapps.build.gradle.plugin.tasks.status.CommitTask
 import com.icapps.build.gradle.plugin.tasks.versionbump.VersionBumpTask
-import com.icapps.build.gradle.plugin.utils.GitHelper
-import de.felixschulze.gradle.HockeyAppUploadTask
 import org.gradle.api.Project
 
 /**
@@ -48,12 +47,13 @@ class VersionBumpPlugin : BuildSubPlugin {
         //There is need to add extra tasks that aggregate the version bumps over build types. Implement them as deps!
 
         androidExtension.buildTypes.forEach { buildType ->
+            /* Version bump */
             val aggregate = project.tasks.create("versionBump${buildType.name.capitalize()}") { task ->
 
                 task.doFirst {
-                    GitHelper.ensureCleanRepo()
+                    CheckCleanRepoTask().apply {  }.checkCleanRepo()
 
-                    justTasks[buildType.name]?.forEach {
+                    tasks[buildType.name]?.forEach {
                         it.versionBump()
                     }
                     CommitTask().apply { message = "Version bump for ${buildType.name}" }.commitAndPush()
@@ -62,7 +62,7 @@ class VersionBumpPlugin : BuildSubPlugin {
             aggregate.group = GROUP_NAME
             aggregate.description = "A version bump will be executed of ${buildType.name.capitalize()}. Changes will be committed."
 
-
+            /* Just Version bump */
             val justAgregate = project.tasks.create("justVersionBump${buildType.name.capitalize()}") { task ->
                 task.doFirst {
                     justTasks[buildType.name]?.forEach {
