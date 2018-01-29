@@ -28,7 +28,7 @@ open class BuildPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         if (!project.plugins.hasPlugin(AppPlugin::class.java)) {
-            project.logger.debug("This plugin is made for Android Projects. The Android Plugin needs to be applied before this plugin.")
+            project.logger.debug("This plugin is made for Android Application Projects. The Android Plugin needs to be applied before this plugin.")
             return
         }
         val deployToPlayStorePlugin = DeployToPlayStorePlugin()
@@ -51,7 +51,7 @@ open class BuildPlugin : Plugin<Project> {
                 val list = if (name.isNotEmpty()) {
                     VersionBumpHelper.versionBump(name)
                 } else {
-                    if (!project.hasProperty("buildNrName")){
+                    if (!project.hasProperty("buildNrName")) {
                         throw RuntimeException("$it need to specify the 'branchNrName' as a param")
                     }
                     VersionBumpHelper.versionBump()

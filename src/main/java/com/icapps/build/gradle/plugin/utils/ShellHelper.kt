@@ -13,13 +13,14 @@ object ShellHelper {
 
     private const val PATH_KEY = "PATH"
 
-    fun execWithReader(command: Array<String>): BufferedReader {
-        val location = getCommandLocation(command[0])
-        command[0] = location
-        return executeWithReader(command)
+    fun execWithReader(command: Collection<String>): BufferedReader {
+        val commandArray = command.toTypedArray()
+        val location = getCommandLocation(commandArray[0])
+        commandArray[0] = location
+        return executeWithReader(commandArray)
     }
 
-    fun exec(command: Array<String>, newLine: Boolean = false): String {
+    fun exec(command: Collection<String>, newLine: Boolean = false): String {
         val reader = execWithReader(command)
         return getOutput(reader, newLine)
     }

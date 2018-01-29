@@ -96,9 +96,9 @@ class DeployToHockeyPlugin : BuildSubPlugin {
             isNotNullOrEmpty(fromEnv) -> fromEnv ?: "No release notes were given."
             else -> {
                 val reader = if (isNotNullOrEmpty(lastSuccess)) {
-                    ShellHelper.execWithReader(arrayOf("git", "log", "$lastSuccess..HEAD", "--pretty=format:%s", "--no-merges"))
+                    ShellHelper.execWithReader(listOf("git", "log", "$lastSuccess..HEAD", "--pretty=format:%s", "--no-merges"))
                 } else {
-                    ShellHelper.execWithReader(arrayOf("git", "log", "--all", "--pretty=format:%s", "--no-merges"))
+                    ShellHelper.execWithReader(listOf("git", "log", "--all", "--pretty=format:%s", "--no-merges"))
                 }
                 val stringBuilder = StringBuilder()
                 reader.readLines()

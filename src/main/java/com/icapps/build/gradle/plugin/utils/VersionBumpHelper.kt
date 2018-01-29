@@ -71,19 +71,19 @@ object VersionBumpHelper {
     }
 
     fun init() {
-        init(null)
+        init(flavorNames = null)
     }
 
     fun init(name: String) {
         init(listOf(name))
     }
 
-    fun init(flavorName: List<String>?) {
+    fun init(flavorNames: List<String>?) {
         val input = FileInputStream(GRADLE_PROPERTIES_FILE)
         val prop = PropertiesHelper()
         prop.load(input)
         var edit = false
-        flavorName?.forEach {
+        flavorNames?.forEach {
             val key = "build${it.capitalize()}Nr"
             if (!prop.containsKey(key)) {
                 prop.setProperty(key, "1")

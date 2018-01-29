@@ -10,11 +10,11 @@ import java.util.regex.Pattern
 object GitHelper {
 
     fun add() {
-        ShellHelper.exec(arrayOf("git", "add", "."))
+        ShellHelper.exec(listOf("git", "add", "."))
     }
 
     fun commit(message: String) {
-        ShellHelper.exec(arrayOf("git", "commit", "-m", message))
+        ShellHelper.exec(listOf("git", "commit", "-m", message))
     }
 
     fun addAndCommit(message: String) {
@@ -23,17 +23,17 @@ object GitHelper {
     }
 
     fun ensureCleanRepo() {
-        val output = ShellHelper.exec(arrayOf("git", "status", "--porcelain"))
+        val output = ShellHelper.exec(listOf("git", "status", "--porcelain"))
         if (!Strings.isNullOrEmpty(output))
             throw RuntimeException("Make sure your git repo is clean")
     }
 
     fun pushToOrigin() {
-        ShellHelper.exec(arrayOf("git", "push"))
+        ShellHelper.exec(listOf("git", "push"))
     }
 
     fun getCurrentBranchName(): String {
-        val output = ShellHelper.exec(arrayOf("git", "branch"), newLine = true)
+        val output = ShellHelper.exec(listOf("git", "branch"), newLine = true)
         val regex = "\\* (.*)"
         val pattern = Pattern.compile(regex)
         val matcher = pattern.matcher(output)
@@ -45,7 +45,7 @@ object GitHelper {
     }
 
     fun branchExists(branch: String): Boolean {
-        val output = ShellHelper.exec(arrayOf("git", "show-ref", "refs/heads/" + branch))
+        val output = ShellHelper.exec(listOf("git", "show-ref", "refs/heads/" + branch))
         return !Strings.isNullOrEmpty(output)
     }
 
@@ -56,7 +56,7 @@ object GitHelper {
     fun getLatestCommitMessages(sinceBranch: String): LinkedList<String> {
         val messages = LinkedList<String>()
         val commitHash = getLatestCommitHash(sinceBranch)
-        val input = ShellHelper.execWithReader(arrayOf("git", "log", "$commitHash..", "--pretty=format:%s", "--no-merges"))
+        val input = ShellHelper.execWithReader(listOf("git", "log", "$commitHash..", "--pretty=format:%s", "--no-merges"))
         for (line in input.lines()) {
             messages.add(line)
         }
@@ -65,11 +65,11 @@ object GitHelper {
     }
 
     private fun getLatestCommitHash(branch: String): String {
-        return ShellHelper.exec(arrayOf("git", "log", "-n", "1", branch, "-- pretty=format:%H"))
+        return ShellHelper.exec(listOf("git", "log", "-n", "1", branch, "-- pretty=format:%H"))
     }
 
     fun getRepoSlug(): String {
-        val output = ShellHelper.exec(arrayOf("git", "remote", "show", "origin"), newLine = true)
+        val output = ShellHelper.exec(listOf("git", "remote", "show", "origin"), newLine = true)
         val regex = "/(.*).git"
         val pattern = Pattern.compile(regex)
         val matcher = pattern.matcher(output)
