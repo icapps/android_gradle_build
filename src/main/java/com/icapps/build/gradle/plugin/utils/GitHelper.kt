@@ -29,7 +29,7 @@ object GitHelper {
     }
 
     fun pushToOrigin() {
-        ShellHelper.exec(listOf("git", "push"))
+        ShellHelper.exec(listOf("git", "push", "origin", getCurrentBranchName()))
     }
 
     fun getCurrentBranchName(): String {
