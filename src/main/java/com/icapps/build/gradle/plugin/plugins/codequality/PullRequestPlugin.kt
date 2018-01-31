@@ -4,6 +4,7 @@ import com.android.build.gradle.AppExtension
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.config.PullRequestConfiguration
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
+import com.icapps.build.gradle.plugin.utils.GitHelper
 import com.icapps.build.gradle.plugin.utils.exists
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -30,6 +31,9 @@ class PullRequestPlugin : BuildSubPlugin {
                 addUnitTestTask(project, task, prConfig)
             if (prConfig.deviceTest)
                 addDeviceTestTask(project, task, prConfig)
+        }
+        task.doFirst {
+            GitHelper.ensureCleanRepo()
         }
         task.group = "verification"
         task.description = "Pull request builds will be triggered with this command."

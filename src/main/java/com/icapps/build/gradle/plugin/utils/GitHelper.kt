@@ -75,7 +75,7 @@ object GitHelper {
     }
 
     private fun getLatestCommitHash(branch: String): String {
-        return ShellHelper.exec(listOf("git", "log", "-n", "1", branch, "-- pretty=format:%H"))
+        return ShellHelper.exec(listOf("git", "log", "-n", "1", branch, "--pretty=format:%H"))
     }
 
     fun getRepoSlug(): String {

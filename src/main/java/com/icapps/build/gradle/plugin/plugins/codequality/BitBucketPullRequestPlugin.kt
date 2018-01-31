@@ -22,7 +22,7 @@ class BitBucketPullRequestPlugin : BuildSubPlugin {
         if (Strings.isNullOrEmpty(bitbucketConfig.user)) {
             throw IllegalArgumentException("No User provided in gradle. Bitbucket integration could not be configured correctly.")
         }
-        val openBitbucket = project.tasks.create(OPEN_BITBUCKET, BitbucketPrTask::class.java) {
+        val openBitbucket = project.tasks.create(CREATE_PR_BITBUCKET, BitbucketPrTask::class.java) {
             it.user = bitbucketConfig.user
             it.prBranch = bitbucketConfig.prBranch ?: "develop"
             it.dependsOn(PullRequestPlugin.PULL_REQUEST_TASK)
@@ -32,7 +32,7 @@ class BitBucketPullRequestPlugin : BuildSubPlugin {
     }
 
     private companion object {
-        private const val OPEN_BITBUCKET = "createPr"
+        private const val CREATE_PR_BITBUCKET = "createPr"
         private const val GROUP_NAME = "iCapps - Bitbucket"
     }
 }
