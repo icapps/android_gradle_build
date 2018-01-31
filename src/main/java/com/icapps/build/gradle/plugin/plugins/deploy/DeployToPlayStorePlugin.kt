@@ -32,7 +32,6 @@ class DeployToPlayStorePlugin : BuildSubPlugin {
             throw IllegalArgumentException("JsonFile is not safe. Use a pk12File instead.")
         }
 
-
         if (config.pk12File == null) {
             throw IllegalArgumentException("No pk12File provided in gradle. PlayStore Publish Plugin could not be configured correctly.")
         }
@@ -45,8 +44,16 @@ class DeployToPlayStorePlugin : BuildSubPlugin {
 
         playStoreConfig.serviceAccountEmail = config.serviceAccountEmail
         playStoreConfig.pk12File = config.pk12File
-        playStoreConfig.setTrack(config.track as String)
+        if (project.hasProperty(TRACK_PROPERTY)) {
+            playStoreConfig.setTrack(project.property(TRACK_PROPERTY) as String)
+        } else {
+            playStoreConfig.setTrack(config.track as String)
+        }
         playStoreConfig.untrackOld = config.untrackOld
         playStoreConfig.userFraction = config.userFraction
+    }
+
+    companion object {
+        const val TRACK_PROPERTY = "track"
     }
 }
