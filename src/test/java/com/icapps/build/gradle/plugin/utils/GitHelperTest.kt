@@ -3,6 +3,9 @@ package com.icapps.build.gradle.plugin.utils
 import org.junit.Assert.*
 import org.junit.Test
 
+/**
+ * @author Koen Van Looveren
+ */
 class GitHelperTest {
 
     @Test
@@ -20,7 +23,7 @@ class GitHelperTest {
     @Test
     fun testCurrentBranch() {
         val result = GitHelper.getCurrentBranchName()
-        assertEquals("master", result)
+        assertEquals("Should be master if your current branch is master", "master", result)
     }
 
     @Test
