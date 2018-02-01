@@ -1,6 +1,7 @@
 package com.icapps.build.gradle.plugin.utils
 
 import joptsimple.internal.Strings
+import java.util.regex.Pattern
 
 /**
  * @author Koen Van Looveren
@@ -32,6 +33,13 @@ inline fun String.replaceLast(oldValue: String, newValue: String): String {
 @Suppress("NOTHING_TO_INLINE")
 inline fun String.removeFirst(stringToRemove: String): String {
     return this.replaceFirst(stringToRemove, "")
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun String.removeRegex(regex: String): String {
+    val p = Pattern.compile(regex)
+    val m = p.matcher(this)
+    return m.replaceAll("")
 }
 
 @Suppress("NOTHING_TO_INLINE")

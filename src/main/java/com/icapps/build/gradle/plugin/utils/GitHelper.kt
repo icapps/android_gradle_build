@@ -24,8 +24,16 @@ object GitHelper {
 
     fun ensureCleanRepo() {
         val output = ShellHelper.exec(listOf("git", "status", "--porcelain"))
-        if (!Strings.isNullOrEmpty(output))
+        val regex = "\\s*M gradle.properties\\s*"
+        val cleanOutput = output.removeRegex(regex)
+        if (!Strings.isNullOrEmpty(cleanOutput)) {
+            println("Git is not clean!")
+            println("> Output (ignore the starting and end quotes):")
+            println(">> '$output'")
+            println("> Clean Output was (ignore the starting and end quotes):")
+            println(">> '$cleanOutput'")
             throw RuntimeException("Make sure your git repo is clean")
+        }
     }
 
     fun pushToOrigin() {
