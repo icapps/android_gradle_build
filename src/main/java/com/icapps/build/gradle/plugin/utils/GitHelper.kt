@@ -37,16 +37,17 @@ object GitHelper {
     }
 
     fun pushToOrigin() {
-        val remoteBranch = System.getenv("GIT_BRANCH")
-        val localBranch = System.getenv("GIT_LOCAL_BRANCH")
-        if ((remoteBranch == null) && (localBranch == null)) {
-            ShellHelper.exec(listOf("git", "push", "origin", getCurrentBranchName()))
-        } else if (remoteBranch == null) {
+        val remoteBranch: String? = System.getenv("GIT_BRANCH")
+        val correctRemoteBranch: String? = remoteBranch?.substring(0 until remoteBranch.indexOf('/'))
+        val localBranch: String? = System.getenv("GIT_LOCAL_BRANCH")
+        if ((correctRemoteBranch != null) && (localBranch != null)) {
+            ShellHelper.exec(listOf("git", "push", correctRemoteBranch, localBranch))
+        } else if ((correctRemoteBranch != null) && (localBranch == null)) {
+            ShellHelper.exec(listOf("git", "push", correctRemoteBranch, getCurrentBranchName()))
+        } else if (remoteBranch == null && localBranch != null) {
             ShellHelper.exec(listOf("git", "push", "origin", localBranch))
-        } else if (localBranch == null) {
-            ShellHelper.exec(listOf("git", "push", remoteBranch, getCurrentBranchName()))
         } else {
-            ShellHelper.exec(listOf("git", "push", remoteBranch, localBranch))
+            ShellHelper.exec(listOf("git", "push", "origin", getCurrentBranchName()))
         }
     }
 
