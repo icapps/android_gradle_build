@@ -23,7 +23,7 @@ class GitHelperTest {
     @Test
     fun testCurrentBranch() {
         val result = GitHelper.getCurrentBranchName()
-        assertEquals("master", result)
+        assertEquals("Should be master if your current branch is master", "master", result)
     }
 
     @Test

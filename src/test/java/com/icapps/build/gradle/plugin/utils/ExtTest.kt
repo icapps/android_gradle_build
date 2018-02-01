@@ -15,6 +15,24 @@ class ExtTest {
     }
 
     @Test
+    fun testRemoveRegex2Lines() {
+        val output = " M gradle.properties\n".removeRegex("\\s*M gradle.properties\\s*")
+        assertEquals("Should be empty", "", output)
+    }
+
+    @Test
+    fun testRemoveRegex3Lines() {
+        val output = " M gradle.properties\n\n".removeRegex("\\s*M gradle.properties\\s*")
+        assertEquals("Should be empty", "", output)
+    }
+
+    @Test
+    fun testRemoveRegexMultiLine() {
+        val output = " M gradle.properties\n M another.file\n D another2.file".removeRegex("\\s*M gradle.properties\\s*")
+        assertEquals("M another.file\n D another2.file", output)
+    }
+
+    @Test
     fun testRemoveLast() {
         val output = "last1 last2 last3".removeLast("last")
         assertEquals("last1 last2 3", output)
