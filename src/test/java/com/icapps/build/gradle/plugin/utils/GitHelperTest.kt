@@ -3,6 +3,9 @@ package com.icapps.build.gradle.plugin.utils
 import org.junit.Assert.*
 import org.junit.Test
 
+/**
+ * @author Koen Van Looveren
+ */
 class GitHelperTest {
 
     @Test
