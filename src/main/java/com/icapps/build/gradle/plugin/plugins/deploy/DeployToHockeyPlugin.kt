@@ -1,11 +1,13 @@
 package com.icapps.build.gradle.plugin.plugins.deploy
 
 import com.icapps.build.gradle.plugin.config.BuildExtension
+import com.icapps.build.gradle.plugin.config.PullRequestConfiguration
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
 import com.icapps.build.gradle.plugin.plugins.codequality.PullRequestPlugin
 import com.icapps.build.gradle.plugin.utils.*
 import de.felixschulze.gradle.HockeyAppPlugin
 import de.felixschulze.gradle.HockeyAppPluginExtension
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Project
 
 /**
@@ -24,7 +26,13 @@ class DeployToHockeyPlugin : BuildSubPlugin {
         project.plugins.apply(HockeyAppPlugin::class.java)
         project.tasks.filter { it.group == HockeyAppPlugin.getGROUP_NAME() }
                 .forEach {
-                    it.dependsOn(PullRequestPlugin.PULL_REQUEST_TASK)
+                    val prConfig = project.extensions.getByType(PullRequestConfiguration::class.java)
+                    val detektConfig = project.extensions.getByType(DetektExtension::class.java)
+                    if (prConfig != null)
+                        it.dependsOn(PullRequestPlugin.PULL_REQUEST_TASK)
+                    else if(detektConfig != null){
+                        it.dependsOn("detektCheck")
+                    }
                     it.doFirst {
                         val hockeyConfig = project.extensions.getByType(HockeyAppPluginExtension::class.java)
                         hockeyConfig.notify = "1"
