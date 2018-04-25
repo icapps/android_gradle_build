@@ -1,13 +1,11 @@
 package com.icapps.build.gradle.plugin.plugins.deploy
 
 import com.icapps.build.gradle.plugin.config.BuildExtension
-import com.icapps.build.gradle.plugin.config.PullRequestConfiguration
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
 import com.icapps.build.gradle.plugin.plugins.codequality.PullRequestPlugin
 import com.icapps.build.gradle.plugin.utils.*
 import de.felixschulze.gradle.HockeyAppPlugin
 import de.felixschulze.gradle.HockeyAppPluginExtension
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Project
 
 /**
@@ -26,11 +24,10 @@ class DeployToHockeyPlugin : BuildSubPlugin {
         project.plugins.apply(HockeyAppPlugin::class.java)
         project.tasks.filter { it.group == HockeyAppPlugin.getGROUP_NAME() }
                 .forEach {
-                    val prConfig = project.extensions.getByType(PullRequestConfiguration::class.java)
-                    val detektConfig = project.extensions.getByType(DetektExtension::class.java)
-                    if (prConfig != null)
+                    val buildExtension = project.extensions.getByType(BuildExtension::class.java)
+                    if (buildExtension.prConfig != null)
                         it.dependsOn(PullRequestPlugin.PULL_REQUEST_TASK)
-                    else if(detektConfig != null){
+                    else if (buildExtension.detektConfig != null) {
                         it.dependsOn("detektCheck")
                     }
                     it.doFirst {

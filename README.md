@@ -238,6 +238,7 @@ By adding the following command to your `iCappsBuildConfig` you will enable `tra
     translations {
         apiKey = "your-icapps-translations-api-key"     //The token that will be used to authenticate with iCapps Translations
         fileName = "translations.xml"                   //Name of the translations file. By changing the name to translations you wont get conlficts with hardcoded strings Default: strings.xml
+        defaultLanguage = "en"                          //English will be stored in values/{fileName} instead of values-en/{fileName}
     }
     
 _Full Setup_
@@ -248,6 +249,7 @@ By adding the following command to your `iCappsBuildConfig` you will enable `tra
         apiKey = "your-icapps-translations-api-key"     //The token that will be used to authenticate with iCapps Translations
         fileName = "strings.xml"                        //Name of the translations file. Default: strings.xml
         sourceRoot = "src/main/res"                     //The location where the translation files will be saved. Default: src/main/res
+        defaultLanguage = "en"                          //English will be stored in values/{fileName} instead of values-en/{fileName}
         
         languageRename { languageCode ->                //Default is identity transformation (return languageCode)
             return languageCode
