@@ -24,6 +24,10 @@ Apply the plugin by adding next command at the top of your app/build.gradle file
 
     apply plugin: 'icapps-build-gradle-plugin'
      
+
+**DOES NOT WORK WITH ANDROID INSTANT RUN**
+     
+
 Add the `iCappsBuildConfig` at the bottom of you app/build.gradle file 
 <br/>
 <tab/><tab/>- detekt will be enabled
