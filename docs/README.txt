@@ -9,7 +9,8 @@ Import in root gradle
     buildscript {
         repositories {
             ...
-        	maven { url "https://plugins.gradle.org/m2/" }
+        	maven { url "https://dl.bintray.com/icapps/maven" }
+            maven { url "https://dl.bintray.com/nicolaverbeeck/maven" }
             ...
         }
         dependencies {
@@ -22,6 +23,10 @@ Import in root gradle
 Apply the plugin by adding next command at the top of your app/build.gradle file
 
     apply plugin: 'icapps-build-gradle-plugin'
+
+
+**DOES NOT WORK WITH ANDROID INSTANT RUN**
+
 
 Add the `iCappsBuildConfig` at the bottom of you app/build.gradle file
 <br/>
@@ -56,6 +61,12 @@ Add the `iCappsBuildConfig` at the bottom of you app/build.gradle file
         playStore {
             serviceAccountEmail = 'your-play-store-account-email'
             pk12File = file("${projectDir}/signing/key.p12")
+        }
+
+        bitbucket {
+            user = "repoOwner"
+            bitbucketUser = System.getenv('BITBUCKET_USER')
+            bitbucketAppKey = System.getenv('BITBUCKET_APP_KEY')
         }
     }
 
@@ -237,6 +248,7 @@ By adding the following command to your `iCappsBuildConfig` you will enable `tra
     translations {
         apiKey = "your-icapps-translations-api-key"     //The token that will be used to authenticate with iCapps Translations
         fileName = "translations.xml"                   //Name of the translations file. By changing the name to translations you wont get conlficts with hardcoded strings Default: strings.xml
+        defaultLanguage = "en"                          //English will be stored in values/{fileName} instead of values-en/{fileName}
     }
 
 _Full Setup_
@@ -247,6 +259,7 @@ By adding the following command to your `iCappsBuildConfig` you will enable `tra
         apiKey = "your-icapps-translations-api-key"     //The token that will be used to authenticate with iCapps Translations
         fileName = "strings.xml"                        //Name of the translations file. Default: strings.xml
         sourceRoot = "src/main/res"                     //The location where the translation files will be saved. Default: src/main/res
+        defaultLanguage = "en"                          //English will be stored in values/{fileName} instead of values-en/{fileName}
 
         languageRename { languageCode ->                //Default is identity transformation (return languageCode)
             return languageCode
@@ -313,6 +326,23 @@ _More Info_
 
 https://github.com/Triple-T/gradle-play-publisher
 
+**Configure Bitbucket**
+
+Automatically create pull requests on bitbucket. This task will first run the _pullRequest_ task to ensure the repo is in a valid state
+
+_Full Setup_
+
+    bitbucket {
+        user = "repoUser"
+        bitbucketUser = System.getenv('BITBUCKET_USER')         //Bitbucket username that is linked to the app key. If unspecified, the value of user is used
+        bitbucketAppKey = System.getenv('BITBUCKET_APP_KEY')    //Bitbucket app key, see https://github.com/Chimerapps/bitbucketcloud-api
+        prBranch = "develop"                                    //Branch to create the PR to. Defaluts to 'develop'
+    }
+
+_More info_
+
+https://github.com/Chimerapps/bitbucketcloud-api
+
 <br/>
 <br/>
 
@@ -341,3 +371,7 @@ https://github.com/Triple-T/gradle-play-publisher
 _Gradle detektCheck plugin:_
 
 https://github.com/arturbosch/detekt
+
+_Bitbucket cloud api:_
+
+https://github.com/Chimerapps/bitbucketcloud-api

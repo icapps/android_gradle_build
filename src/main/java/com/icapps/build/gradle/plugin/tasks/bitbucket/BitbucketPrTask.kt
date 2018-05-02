@@ -14,18 +14,14 @@ import org.gradle.api.tasks.TaskAction
 open class BitbucketPrTask : DefaultTask() {
 
     lateinit var user: String
+    lateinit var bitbucketUser: String
+    lateinit var bitbucketAppKey: String
     lateinit var prBranch: String
 
     private lateinit var bitbucket: Bitbucket
 
     @TaskAction
     fun createPr() {
-        val username = System.getenv("GRADLE_PLUGIN_BITBUCKET_USERNAME_ICAPPS") ?:
-                throw IllegalArgumentException("'GRADLE_PLUGIN_BITBUCKET_USERNAME_ICAPPS' is not set. Please add your GRADLE_PLUGIN_BITBUCKET_USERNAME_ICAPPS to your system.env. To make sure gradle can find your username. Restart your computer.")
-
-        val token = System.getenv("GRADLE_PLUGIN_BITBUCKET_TOKEN_ICAPPS") ?:
-                throw IllegalArgumentException("'GRADLE_PLUGIN_BITBUCKET_TOKEN_ICAPPS' is not set. Please add your GRADLE_PLUGIN_BITBUCKET_TOKEN_ICAPPS to your system.env. To make sure gradle can find your token. Restart your computer.")
-
         if (GitHelper.branchNotExists(prBranch)) {
             throw IllegalArgumentException("$prBranch does not exists")
         }
@@ -42,9 +38,9 @@ open class BitbucketPrTask : DefaultTask() {
         }
         val prDescription = messages.joinToString("\n\n")
 
-        bitbucket = Bitbucket(username, token)
+        bitbucket = Bitbucket(bitbucketUser, bitbucketAppKey)
 
-        val defaultReviewers = getDefaultReviewers(username, repoSlug)
+        val defaultReviewers = getDefaultReviewers(bitbucketUser, repoSlug)
 
         val source = Destination(currentBranch)
         val destination = Destination(prBranch)
