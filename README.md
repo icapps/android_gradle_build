@@ -62,6 +62,12 @@ Add the `iCappsBuildConfig` at the bottom of you app/build.gradle file
             serviceAccountEmail = 'your-play-store-account-email'
             pk12File = file("${projectDir}/signing/key.p12")
         }    
+        
+        bitbucket {
+            user = "repoOwner"
+            bitbucketUser = System.getenv('BITBUCKET_USER')
+            bitbucketAppKey = System.getenv('BITBUCKET_APP_KEY')
+        }
     }
 
 **Configure Detekt**
@@ -320,6 +326,23 @@ _More Info_
 
 https://github.com/Triple-T/gradle-play-publisher
 
+**Configure Bitbucket**
+
+Automatically create pull requests on bitbucket. This task will first run the _pullRequest_ task to ensure the repo is in a valid state
+
+_Full Setup_
+
+    bitbucket {
+        user = "repoUser"
+        bitbucketUser = System.getenv('BITBUCKET_USER')         //Bitbucket username that is linked to the app key. If unspecified, the value of user is used
+        bitbucketAppKey = System.getenv('BITBUCKET_APP_KEY')    //Bitbucket app key, see https://github.com/Chimerapps/bitbucketcloud-api
+        prBranch = "develop"                                    //Branch to create the PR to. Defaluts to 'develop'
+    }
+    
+_More info_
+
+https://github.com/Chimerapps/bitbucketcloud-api
+
 <br/>
 <br/>
 
@@ -348,3 +371,7 @@ https://github.com/Triple-T/gradle-play-publisher
 _Gradle detektCheck plugin:_
 
 https://github.com/arturbosch/detekt
+
+_Bitbucket cloud api:_
+
+https://github.com/Chimerapps/bitbucketcloud-api
