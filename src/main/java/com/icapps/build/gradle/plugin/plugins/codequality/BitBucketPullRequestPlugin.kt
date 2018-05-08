@@ -18,13 +18,13 @@ class BitBucketPullRequestPlugin : BuildSubPlugin {
             return
         }
 
-        if (bitbucketConfig.user.isNullOrEmpty()) {
+        if (bitbucketConfig.user.isEmpty()) {
             throw IllegalArgumentException("No User provided in gradle (user). Bitbucket integration could not be configured correctly.")
         }
         if (bitbucketConfig.tokenUser.isNullOrEmpty()) {
             bitbucketConfig.tokenUser = bitbucketConfig.user
         }
-        if (bitbucketConfig.token.isNullOrEmpty()) {
+        if (bitbucketConfig.token.isEmpty()) {
             throw IllegalArgumentException("No bitbucket app token provided in gradle (token). Bitbucket integration could not be configured correctly.")
         }
 

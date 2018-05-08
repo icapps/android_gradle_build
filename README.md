@@ -65,8 +65,8 @@ Add the `iCappsBuildConfig` at the bottom of you app/build.gradle file
         
         bitbucket {
             user = "repoOwner"
-            bitbucketUser = System.getenv('BITBUCKET_USER')
-            bitbucketAppKey = System.getenv('BITBUCKET_APP_KEY')
+            token = System.getenv('BITBUCKET_APP_KEY')
+            tokenUrser = System.getenv('BITBUCKET_USER')
         }
     }
 
@@ -334,8 +334,8 @@ _Full Setup_
 
     bitbucket {
         user = "repoUser"
-        bitbucketUser = System.getenv('BITBUCKET_USER')         //Bitbucket username that is linked to the app key. If unspecified, the value of user is used
-        bitbucketAppKey = System.getenv('BITBUCKET_APP_KEY')    //Bitbucket app key, see https://github.com/Chimerapps/bitbucketcloud-api
+        token = System.getenv('BITBUCKET_USER')         //Bitbucket username that is linked to the app key. If unspecified, the value of user is used
+        tokenUrser = System.getenv('BITBUCKET_APP_KEY')    //Bitbucket app key, see https://github.com/Chimerapps/bitbucketcloud-api
         prBranch = "develop"                                    //Branch to create the PR to. Defaluts to 'develop'
     }
     
