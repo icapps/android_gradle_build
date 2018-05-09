@@ -45,7 +45,7 @@ open class BitbucketPrTask : DefaultTask() {
         val source = Destination(currentBranch)
         val destination = Destination(prBranch)
 
-        val pullRequest = PullRequest(prTitle, prDescription, source, destination, defaultReviewers)
+        val pullRequest = PullRequest(0, prTitle, prDescription, source, destination, defaultReviewers)
 
         val responsePr = bitbucket.api
                 .postPullRequest(user, repoSlug, pullRequest)
@@ -55,6 +55,10 @@ open class BitbucketPrTask : DefaultTask() {
         if (errorPr != null) {
             throw RuntimeException("Create PR Error:\n${errorPr.string()}")
         }
+
+        val response = responsePr.body() ?: return
+        println("Your pull request has been made. You can check the details in the link below.")
+        println("https://bitbucket.org/$user/$repoSlug/pull-requests/${response.id}")
     }
 
     private fun getDefaultReviewers(username: String, repoSlug: String): List<DefaultReviewer> {
