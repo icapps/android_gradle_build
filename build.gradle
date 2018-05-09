@@ -46,7 +46,7 @@ repositories {
     maven { url "https://dl.bintray.com/nicolaverbeeck/maven" }
 }
 
-def bitbucketCloudApi = '0.1.1'
+def bitbucketCloudApi = '0.1.2'
 def translationsPlugin = '1.0.4'
 def detektPlugin = '1.0.0.RC6-2'
 def hockeyAppPlugin = '3.6'
@@ -98,12 +98,12 @@ def pomConfig = {
         developer {
             name "Koen Van Looveren"
             email "koen.vanlooveren@icapps.com"
-            organization "iCapps"
+            organization "icapps"
         }
         developer {
             name "Nicola Verbeeck"
             email "nicola.verbeeck@icapps.com"
-            organization "iCapps"
+            organization "icapps"
         }
     }
 }

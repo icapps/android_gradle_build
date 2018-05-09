@@ -55,6 +55,10 @@ open class BitbucketPrTask : DefaultTask() {
         if (errorPr != null) {
             throw RuntimeException("Create PR Error:\n${errorPr.string()}")
         }
+
+        val response = responsePr.body() ?: return
+        println("Your pullrequest has been made. you can")
+        println("https://bitbucket.org/$user/$repoSlug/pull-requests/${response.id}")
     }
 
     private fun getDefaultReviewers(username: String, repoSlug: String): List<DefaultReviewer> {
