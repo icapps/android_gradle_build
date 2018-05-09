@@ -80,11 +80,15 @@ object GitHelper {
             messages.add(line)
         }
         input.close()
+        messages.reverse()
         return messages
     }
 
     private fun getLatestCommitHash(branch: String): String {
-        return ShellHelper.exec(listOf("git", "log", "-n", "1", branch, "--pretty=format:%H"))
+        val remoteBranch: String? = System.getenv("GIT_BRANCH")
+        val correctRemoteBranch: String = remoteBranch?.substring(0 until remoteBranch.indexOf('/'))
+                ?: "origin/$branch"
+        return ShellHelper.exec(listOf("git", "log", "-n", "1", correctRemoteBranch, "--pretty=format:%H"))
     }
 
     fun getRepoSlug(): String {
