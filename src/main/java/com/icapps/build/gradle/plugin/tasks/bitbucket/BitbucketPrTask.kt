@@ -45,7 +45,7 @@ open class BitbucketPrTask : DefaultTask() {
         val source = Destination(currentBranch)
         val destination = Destination(prBranch)
 
-        val pullRequest = PullRequest(prTitle, prDescription, source, destination, defaultReviewers)
+        val pullRequest = PullRequest(0, prTitle, prDescription, source, destination, defaultReviewers)
 
         val responsePr = bitbucket.api
                 .postPullRequest(user, repoSlug, pullRequest)
