@@ -57,7 +57,7 @@ open class BitbucketPrTask : DefaultTask() {
         }
 
         val response = responsePr.body() ?: return
-        println("Your pullrequest has been made. you can")
+        println("Your pull request has been made. You can check the details in the link below.")
         println("https://bitbucket.org/$user/$repoSlug/pull-requests/${response.id}")
     }
 
