@@ -31,7 +31,7 @@ open class BitbucketPrTask : DefaultTask() {
 
         val messages = GitHelper.getLatestCommitMessages(prBranch)
 
-        val prTitle = prBranch
+        val prTitle = currentBranch
 
         val prDescription = messages.joinToString("\n\n")
 
