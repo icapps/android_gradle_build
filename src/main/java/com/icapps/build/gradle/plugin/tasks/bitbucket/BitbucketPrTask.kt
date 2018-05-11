@@ -31,11 +31,8 @@ open class BitbucketPrTask : DefaultTask() {
 
         val messages = GitHelper.getLatestCommitMessages(prBranch)
 
-        val prTitle = if (messages.isEmpty()) {
-            "Pull request generated with the Gradle Build Plugin $currentBranch => $prBranch"
-        } else {
-            messages.last
-        }
+        val prTitle = prBranch
+
         val prDescription = messages.joinToString("\n\n")
 
         bitbucket = Bitbucket(bitbucketUser, bitbucketAppKey)
