@@ -8,8 +8,9 @@ import io.gitlab.arturbosch.detekt.extensions.IdeaExtension
 import io.gitlab.arturbosch.detekt.extensions.ProfileExtension
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.jetbrains.kotlin.preprocessor.mkdirsOrFail
 import java.io.FileOutputStream
+import java.io.IOException
+import java.nio.file.Files
 
 /**
  * @author Nicola Verbeeck
@@ -82,11 +83,25 @@ class DetektPlugin : BuildSubPlugin {
     private fun ensureDetektFile(project: Project) {
         val file = project.rootProject.file(TARGET_FILE)
         if (!file.exists()) {
-            file.parentFile.mkdirsOrFail()
+            if (!file.parentFile.exists()) {
+                try {
+                    Files.createDirectories(file.parentFile.toPath())
+                } catch (e: IOException) {
+                    project.logger.debug("Could not create detekt directory ${e.message}")
+                    e.printStackTrace()
+                    throw e
+                }
+            }
 
             javaClass.getResourceAsStream("/default-detekt.yml").use { input ->
                 FileOutputStream(file).use { output ->
-                    input.copyTo(output)
+                    try {
+                        input.copyTo(output)
+                    } catch (e: IOException) {
+                        project.logger.debug("Could not copy default-detekt.yml to ${file.path} ${e.message}")
+                        e.printStackTrace()
+                        throw e
+                    }
                 }
             }
         }
