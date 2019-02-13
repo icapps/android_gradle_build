@@ -47,7 +47,7 @@ repositories {
 }
 
 def bitbucketCloudApi = '0.1.2'
-def translationsPlugin = '1.0.4'
+def translationsPlugin = '1.0.5'
 def detektPlugin = '1.0.0.RC6-2'
 def hockeyAppPlugin = '3.6'
 def playPublisherPlugin = '1.2.0'
