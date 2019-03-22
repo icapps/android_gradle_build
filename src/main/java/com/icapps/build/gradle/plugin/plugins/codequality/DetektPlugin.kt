@@ -1,5 +1,6 @@
 package com.icapps.build.gradle.plugin.plugins.codequality
 
+import com.icapps.build.gradle.plugin.Constants
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
 import io.gitlab.arturbosch.detekt.DetektPlugin
@@ -24,7 +25,7 @@ class DetektPlugin : BuildSubPlugin {
     override fun configure(project: Project, configuration: BuildExtension) {
         val config = configuration.detektConfig
         if (config == null) {
-            project.logger.debug("No Detekt block set in gradle. Detekt not be available for this project")
+            project.logger.debug("${Constants.LOGGING_PREFIX} No Detekt block set in gradle. Detekt not be available for this project")
             return
         }
         init(project)
@@ -87,7 +88,7 @@ class DetektPlugin : BuildSubPlugin {
                 try {
                     Files.createDirectories(file.parentFile.toPath())
                 } catch (e: IOException) {
-                    project.logger.debug("Could not create detekt directory ${e.message}")
+                    project.logger.debug("${Constants.LOGGING_PREFIX} Could not create detekt directory ${e.message}")
                     e.printStackTrace()
                     throw e
                 }
@@ -98,7 +99,7 @@ class DetektPlugin : BuildSubPlugin {
                     try {
                         input.copyTo(output)
                     } catch (e: IOException) {
-                        project.logger.debug("Could not copy default-detekt.yml to ${file.path} ${e.message}")
+                        project.logger.debug("${Constants.LOGGING_PREFIX} Could not copy default-detekt.yml to ${file.path} ${e.message}")
                         e.printStackTrace()
                         throw e
                     }

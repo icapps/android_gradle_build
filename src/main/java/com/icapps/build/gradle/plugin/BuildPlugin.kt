@@ -27,7 +27,7 @@ open class BuildPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         if (!project.plugins.hasPlugin(AppPlugin::class.java)) {
             initForAndroidLibrary(project)
-            project.logger.debug("This plugin is made for Android Application Projects. The Android Plugin needs to be applied before this plugin.")
+            project.logger.debug("${Constants.LOGGING_PREFIX} This plugin is made for Android Application Projects. The Android Plugin needs to be applied before this plugin.")
             return
         }
         initForAndroidApplications(project)
