@@ -1,7 +1,6 @@
 package com.icapps.build.gradle.plugin.plugins.deploy
 
 import com.google.common.base.Strings
-import com.icapps.build.gradle.plugin.Constants
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
 import de.triplet.gradle.play.PlayPublisherPlugin
@@ -20,7 +19,7 @@ class DeployToPlayStorePlugin : BuildSubPlugin {
     override fun configure(project: Project, configuration: BuildExtension) {
         val config = configuration.playConfig
         if (config == null) {
-            project.logger.debug("${Constants.LOG_PREFIX} No PlayStore block set in gradle. Play Store Deployment will not be available for this project.")
+            project.logger.debug("No PlayStore block set in gradle. Play Store Deployment will not be available for this project.")
             return
         }
         init(project)

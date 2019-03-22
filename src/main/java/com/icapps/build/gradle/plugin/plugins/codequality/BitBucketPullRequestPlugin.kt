@@ -1,6 +1,5 @@
 package com.icapps.build.gradle.plugin.plugins.codequality
 
-import com.icapps.build.gradle.plugin.Constants
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
 import com.icapps.build.gradle.plugin.tasks.bitbucket.BitbucketPrTask
@@ -15,7 +14,7 @@ class BitBucketPullRequestPlugin : BuildSubPlugin {
         val bitbucketConfig = configuration.bitbucketConfig
 
         if (bitbucketConfig == null) {
-            project.logger.debug("${Constants.LOG_PREFIX} No Bitbucket block set in gradle. Bitbucket integration not be available for this project")
+            project.logger.debug("No Bitbucket block set in gradle. Bitbucket integration not be available for this project")
             return
         }
 

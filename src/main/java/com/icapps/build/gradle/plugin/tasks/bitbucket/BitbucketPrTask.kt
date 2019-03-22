@@ -4,7 +4,6 @@ import com.chimerapps.bitbucketcloud.api.Bitbucket
 import com.chimerapps.bitbucketcloud.api.model.DefaultReviewer
 import com.chimerapps.bitbucketcloud.api.model.Destination
 import com.chimerapps.bitbucketcloud.api.model.PullRequest
-import com.icapps.build.gradle.plugin.Constants
 import com.icapps.build.gradle.plugin.utils.GitHelper
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
@@ -66,7 +65,7 @@ open class BitbucketPrTask : DefaultTask() {
 
         val errorDefaultReviewers = responseDefaultReviewers.errorBody()
         if (errorDefaultReviewers != null) {
-            project.logger.debug("${Constants.LOG_PREFIX} You don't have the admin permission to get the default reviewers")
+            project.logger.debug("You don't have the admin permission to get the default reviewers")
             return mutableListOf()
         }
 

@@ -1,7 +1,6 @@
 package com.icapps.build.gradle.plugin.plugins.codequality
 
 import com.android.build.gradle.AppExtension
-import com.icapps.build.gradle.plugin.Constants
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.config.PullRequestConfiguration
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
@@ -19,7 +18,7 @@ class PullRequestPlugin : BuildSubPlugin {
         val prConfig = configuration.prConfig
 
         if (prConfig == null) {
-            project.logger.debug("${Constants.LOG_PREFIX} No Pr block set in gradle. Pr not be available for this project")
+            project.logger.debug("No Pr block set in gradle. Pr not be available for this project")
             return
         }
 
