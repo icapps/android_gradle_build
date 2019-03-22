@@ -1,5 +1,6 @@
 package com.icapps.build.gradle.plugin.plugins.deploy
 
+import com.icapps.build.gradle.plugin.Constants
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
 import com.icapps.build.gradle.plugin.plugins.codequality.PullRequestPlugin
@@ -50,7 +51,7 @@ class DeployToHockeyPlugin : BuildSubPlugin {
     override fun configure(project: Project, configuration: BuildExtension) {
         val config = configuration.hockeyConfig
         if (config == null) {
-            project.logger.debug("No Hockey block set in gradle. Hockey App Deployment will not be available for this project.")
+            project.logger.debug("${Constants.LOG_PREFIX} No Hockey block set in gradle. Hockey App Deployment will not be available for this project.")
             return
         }
 
