@@ -24,13 +24,29 @@ import org.gradle.api.Project
  */
 open class BuildPlugin : Plugin<Project> {
 
-    private val subPlugins = mutableListOf<BuildSubPlugin>()
-
     override fun apply(project: Project) {
         if (!project.plugins.hasPlugin(AppPlugin::class.java)) {
+            initForAndroidLibrary(project)
             project.logger.debug("This plugin is made for Android Application Projects. The Android Plugin needs to be applied before this plugin.")
             return
         }
+        initForAndroidApplications(project)
+    }
+
+    private fun initForAndroidLibrary(project: Project) {
+        val extension = project.extensions.create(CONFIG_NAME, BuildExtension::class.java, project)
+        val subPlugins = mutableListOf<BuildSubPlugin>()
+
+        subPlugins.replaceAll(DetektPlugin())
+        project.afterEvaluate {
+            subPlugins.forEach { it.configure(project, extension) }
+        }
+    }
+
+    private fun initForAndroidApplications(project: Project) {
+        val extension = project.extensions.create(CONFIG_NAME, BuildExtension::class.java, project)
+        val subPlugins = mutableListOf<BuildSubPlugin>()
+
         val deployToPlayStorePlugin = DeployToPlayStorePlugin()
         val translations = TranslationsPlugin()
         subPlugins.replaceAll(translations,
@@ -41,8 +57,6 @@ open class BuildPlugin : Plugin<Project> {
                 BitBucketPullRequestPlugin(),
                 DeployToHockeyPlugin(),
                 deployToPlayStorePlugin)
-
-        val extension = project.extensions.create(CONFIG_NAME, BuildExtension::class.java, project)
 
         var versionBump = false
         project.gradle.startParameter.taskNames.forEach {
