@@ -86,43 +86,11 @@ _Recommended Setup_
 By adding the following command to your `iCappsBuildConfig` you will enable `detekt` for your project with the default detekt configurations and will override all the given params
 
     detekt {
-        version = "detekt-version-to-use"                           //Detekt version that will be used 
-    
-        idea {
-            path = ""
-            report = "$projectDir/reports/report.xml"               //File where the check reports will be stored
-            inspectionsProfile = ""                                 //TODO CHECK: I have no idea why this needs to be set
-        }
-    
-        profile("main") {
-            config = "$projectDir/../codecheck/detekt-config.yml"   //The config file that detekt will use to perform the correct checks
-            input = "$projectDir/src/main/kotlin"                   //The folder where detekt will perform his checks
-            filters = ".*test.*,.*/resources/.*,.*/tmp/.*"          //Files that match this filer will not be checked, Defined with regex and ';' as separator
-            outputName = "detektReport"                             //File name of the reports for 'main'
-            output = "$projectDir/reports/"                         //Folder where the reports will be stored for 'main'
-        }
-    }
-    
-_Full Setup_
-
-By adding the following command to your `iCappsBuildConfig` you will enable `detekt` for your project with all the given params
-
-    detekt {
-        version = "detekt-version-to-use"                           //Detekt version that will be used 
-    
-        idea {
-            path = ""
-            report = "$projectDir/reports/report.xml"               //File where the check reports will be stored
-            inspectionsProfile = ""                                 //TODO CHECK: I have no idea why this needs to be set
-        }
-    
-        profile("main") {
-            config = "$projectDir/../codecheck/detekt-config.yml"   //The config file that detekt will use to perform the correct checks
-            input = "$projectDir/src/main/kotlin"                   //The folder where detekt will perform his checks
-            filters = ".*test.*,.*/resources/.*,.*/tmp/.*"          //Files that match this filer will not be checked, Defined with regex and ';' as separator
-            outputName = "detektReport"                             //File name of the reports for 'main'
-            output = "$projectDir/reports/"                         //Folder where the reports will be stored for 'main'
-        }    
+        input = files("src/main/java")                                  //Sources folder
+        filters = ".*/resources/.*,.*/build/.*"                         //Files that match filter will not be tested
+        config = files("$projectDir/../codecheck/detekt-config.yml")    //Detekt config that will be used
+        baseline = file("$projectDir/../codecheck/detekt-baseline.xml") //Baseline for code or files that should not be checked.
+        failFast = true                                                 //failfast when only 1 error occurs
     }
 
 _More Info_

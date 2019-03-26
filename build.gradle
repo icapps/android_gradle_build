@@ -1,20 +1,18 @@
 buildscript {
-    ext.kotlin_version = '1.2.41'
-
     repositories {
         mavenCentral()
         jcenter()
-
     }
+
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.21"
     }
 }
 plugins {
     id "com.jfrog.bintray" version "1.7.3"
 }
 
-def artifactVersion = '1.0.14'
+def artifactVersion = '1.1.0'
 def artifactGroup = 'com.icapps.build.gradle'
 group "$artifactGroup"
 version "$artifactVersion"
@@ -46,26 +44,18 @@ repositories {
     maven { url "https://dl.bintray.com/nicolaverbeeck/maven" }
 }
 
-def bitbucketCloudApi = '0.1.2'
-def translationsPlugin = '1.0.5'
-def detektPlugin = '1.0.0.RC6-2'
-def hockeyAppPlugin = '3.6'
-def playPublisherPlugin = '1.2.0'
-def androidBuildTools = '3.0.1'
-def junit = '4.11'
-
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.21"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.3.21"
 
-    compile "com.chimerapps:bitbucketcloud-api:$bitbucketCloudApi"
-    compile "com.chimerapps.gradle:icapps-translations-plugin:$translationsPlugin"
-    compile "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detektPlugin"
-    compile "de.felixschulze.gradle:gradle-hockeyapp-plugin:$hockeyAppPlugin"
-    compile "com.github.triplet.gradle:play-publisher:$playPublisherPlugin"
-    compileOnly "com.android.tools.build:gradle:$androidBuildTools"
+    compile "com.chimerapps:bitbucketcloud-api:0.1.2"
+    compile "com.chimerapps.gradle:icapps-translations-plugin:1.0.5"
+    compile "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.0.0-RC14"
+    compile "de.felixschulze.gradle:gradle-hockeyapp-plugin:3.6"
+    compile "com.github.triplet.gradle:play-publisher:1.2.0"
+    compileOnly "com.android.tools.build:gradle:3.0.1"
 
-    testCompile "junit:junit:$junit"
+    testCompile "junit:junit:4.11"
 }
 
 bintray {

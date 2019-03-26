@@ -3,7 +3,6 @@ package com.icapps.build.gradle.plugin.config
 import com.chimerapps.gradle.icapps_translations.DownloadTranslationsExtension
 import de.felixschulze.gradle.HockeyAppPluginExtension
 import de.triplet.gradle.play.PlayPublisherPluginExtension
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Action
 import org.gradle.api.Project
 
@@ -42,5 +41,4 @@ open class BuildExtension(private val project: Project) {
     open fun hockey(configuration: Action<in HockeyAppPluginExtension>) {
         hockeyConfig = HockeyAppPluginExtension(project).apply { configuration.execute(this) }
     }
-
 }
