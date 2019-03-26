@@ -5,16 +5,15 @@ import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
 import io.gitlab.arturbosch.detekt.DetektPlugin
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
-import io.gitlab.arturbosch.detekt.extensions.IdeaExtension
-import io.gitlab.arturbosch.detekt.extensions.ProfileExtension
-import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
+import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.file.Files
 
 /**
- * @author Nicola Verbeeck
+ * @author Koen Van Looveren
  */
 class DetektPlugin : BuildSubPlugin {
 
@@ -31,58 +30,22 @@ class DetektPlugin : BuildSubPlugin {
         init(project)
 
         ensureDetektFile(project)
+        ensureBaseLineFile(project)
 
-        val detektConfig = project.extensions.getByType(DetektExtension::class.java)
-
-        detektConfig.version = config.version
-        detektConfig.debug = config.debug
-        detektConfig.ideaExtension = transformIdea(project, config.ideaExtension)
-        detektConfig.profile = config.profile
-
-        injectProfile(project, detektConfig, config.systemOrDefaultProfile() ?: createDefaultProfile(project))
+        project.extensions.getByType(DetektExtension::class.java).apply {
+            this.config = config.config ?: project.layout.configurableFiles(getDefaultConfigFile(project).path)
+            this.input = config.input ?: guessProgramSources(project)
+            baseline = config.baseline ?: getBaseLineFile(project)
+            failFast = config.failFast ?: true
+            filters = config.filters
+        }
 
         val root = project.rootProject.repositories
         project.buildscript.repositories.addAll(root)
     }
 
-    private fun createDefaultProfile(project: Project): ProfileExtension {
-        return ProfileExtension("main").apply {
-            input = project.file("src/main/java").absolutePath
-            config = project.rootProject.file(TARGET_FILE).absolutePath
-            filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
-            output = project.file("reports").absolutePath
-            outputName = "detektReport"
-            parallel = true
-        }
-    }
-
-    private fun injectProfile(project: Project, config: DetektExtension, source: ProfileExtension) {
-        config.profile(source.name, Action { target ->
-
-            target.input = source.input ?: guessProgramSources(project)
-            target.config = source.config ?: project.rootProject.file(TARGET_FILE).absolutePath
-            target.configResource = source.configResource
-            target.filters = source.filters ?: ".*test.*,.*/resources/.*,.*/tmp/.*"
-            target.ruleSets = source.ruleSets
-            target.output = source.output ?: project.file("reports").absolutePath
-            target.outputName = source.outputName ?: "detektReport"
-            target.baseline = source.baseline
-            target.parallel = source.parallel
-            target.disableDefaultRuleSets = source.disableDefaultRuleSets
-            target.plugins = source.plugins
-        })
-    }
-
-    private fun transformIdea(project: Project, ideaExtension: IdeaExtension): IdeaExtension {
-        return ideaExtension.apply {
-            path = path ?: ""
-            report = report ?: project.file("reports/report.xml").absolutePath
-            inspectionsProfile = inspectionsProfile ?: ""
-        }
-    }
-
     private fun ensureDetektFile(project: Project) {
-        val file = project.rootProject.file(TARGET_FILE)
+        val file = getDefaultConfigFile(project)
         if (!file.exists()) {
             if (!file.parentFile.exists()) {
                 try {
@@ -94,7 +57,7 @@ class DetektPlugin : BuildSubPlugin {
                 }
             }
 
-            javaClass.getResourceAsStream("/default-detekt.yml").use { input ->
+            javaClass.getResourceAsStream(DEFAULT_CONFIG_FILE).use { input ->
                 FileOutputStream(file).use { output ->
                     try {
                         input.copyTo(output)
@@ -108,19 +71,57 @@ class DetektPlugin : BuildSubPlugin {
         }
     }
 
-    private fun guessProgramSources(project: Project): String {
+    private fun ensureBaseLineFile(project: Project) {
+        val file = getBaseLineFile(project)
+        if (!file.exists()) {
+            if (!file.parentFile.exists()) {
+                try {
+                    Files.createDirectories(file.parentFile.toPath())
+                } catch (e: IOException) {
+                    project.logger.debug("${Constants.LOGGING_PREFIX} Could not create detekt directory ${e.message}")
+                    e.printStackTrace()
+                    throw e
+                }
+            }
+
+            javaClass.getResourceAsStream(DEFAULT_BASELINE_FILE).use { input ->
+                FileOutputStream(file).use { output ->
+                    try {
+                        input.copyTo(output)
+                    } catch (e: IOException) {
+                        project.logger.debug("${Constants.LOGGING_PREFIX} Could not copy default-baseline.xml to ${file.path} ${e.message}")
+                        e.printStackTrace()
+                        throw e
+                    }
+                }
+            }
+        }
+    }
+
+    private fun guessProgramSources(project: Project): ConfigurableFileCollection {
         val java = project.file("src/main/java")
         val kotlin = project.file("src/main/kotlin")
-        if (!java.exists())
-            return kotlin.absolutePath
-        if (!kotlin.exists())
-            return java.absolutePath
+        if (java.exists() && kotlin.exists())
+            return project.layout.configurableFiles(kotlin.absolutePath, java.absolutePath)
+        if (java.exists())
+            return project.layout.configurableFiles(java.absolutePath)
+        if (kotlin.exists())
+            return project.layout.configurableFiles(kotlin.absolutePath)
+        return project.layout.configurableFiles(project.file("src/main").absolutePath)
+    }
 
-        return project.file("src/main").absolutePath
+    private fun getDefaultConfigFile(project: Project): File {
+        return project.rootProject.file(TARGET_DETEKT_FILE)
+    }
+
+    private fun getBaseLineFile(project: Project): File {
+        return project.rootProject.file(TARGET_BASELINE_FILE)
     }
 
     private companion object {
-        private const val TARGET_FILE = "codecheck/detekt-config.yml"
+        private const val TARGET_DETEKT_FILE = "codecheck/detekt-config.yml"
+        private const val TARGET_BASELINE_FILE = "codecheck/detekbaseline.xml"
+        private const val DEFAULT_CONFIG_FILE = "/default-detekt.yml"
+        private const val DEFAULT_BASELINE_FILE = "/default-baseline.xml"
     }
-
 }

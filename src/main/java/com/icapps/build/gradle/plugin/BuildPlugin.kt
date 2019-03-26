@@ -93,8 +93,8 @@ open class BuildPlugin : Plugin<Project> {
             if (project.hasProperty("buildNrName")) {
                 VersionBumpHelper.init(project.property("buildNrName").toString())
             }
-            val variants = project.extensions.findByType(AppExtension::class.java).applicationVariants
-            VersionBumpHelper.init(variants.map { it.name })
+            val variants = project.extensions.findByType(AppExtension::class.java)?.applicationVariants
+            VersionBumpHelper.init(variants?.map { it.name })
 
             subPlugins.forEach { it.configure(project, extension) }
         }
