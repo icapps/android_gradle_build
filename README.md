@@ -327,7 +327,7 @@ _Gradle Play Store Publisher:_
 
 https://github.com/Triple-T/gradle-play-publisher
 
-_Gradle detektCheck plugin:_
+_Gradle detekt plugin:_
 
 https://github.com/arturbosch/detekt
 

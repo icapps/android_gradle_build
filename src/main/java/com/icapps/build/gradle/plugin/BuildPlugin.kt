@@ -1,6 +1,5 @@
 package com.icapps.build.gradle.plugin
 
-import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
@@ -11,10 +10,6 @@ import com.icapps.build.gradle.plugin.plugins.deploy.DeployToAppCenterPlugin
 import com.icapps.build.gradle.plugin.plugins.deploy.DeployToPlayStorePlugin
 import com.icapps.build.gradle.plugin.plugins.status.GitStatusPlugin
 import com.icapps.build.gradle.plugin.plugins.translations.TranslationsPlugin
-import com.icapps.build.gradle.plugin.plugins.versionbump.VersionBumpPlugin
-import com.icapps.build.gradle.plugin.utils.VersionBumpHelper
-import com.icapps.build.gradle.plugin.utils.removeFirst
-import com.icapps.build.gradle.plugin.utils.removeLast
 import com.icapps.build.gradle.plugin.utils.replaceAll
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -52,51 +47,13 @@ open class BuildPlugin : Plugin<Project> {
         val translations = TranslationsPlugin()
         subPlugins.replaceAll(translations,
                 GitStatusPlugin(),
-                VersionBumpPlugin(),
                 DetektPlugin(),
                 PullRequestPlugin(),
                 BitBucketPullRequestPlugin(),
                 deployToAppCenterPlugin,
                 deployToPlayStorePlugin)
 
-        var versionBump = false
-        project.gradle.startParameter.taskNames.forEach {
-            if (it.startsWith("upload") && it.endsWith("ToHockeyApp")) {
-                val name = it.removeFirst("upload").removeLast("ToHockeyApp")
-                val list = if (name.isNotEmpty()) {
-                    VersionBumpHelper.versionBump(name)
-                } else {
-                    if (!project.hasProperty("buildNrName")) {
-                        throw RuntimeException("$it need to specify the 'branchNrName' as a param")
-                    }
-                    VersionBumpHelper.versionBump()
-                }
-                list.forEach {
-                    project.setProperty(it.first, it.second.toString())
-                    project.rootProject.setProperty(it.first, it.second.toString())
-                }
-
-                if (project.hasProperty("buildNrName") && !versionBump) {
-                    versionBump = true
-                    val bump = VersionBumpHelper.versionBump(project.property("buildNrName").toString())
-
-                    bump.forEach {
-                        project.setProperty(it.first, it.second.toString())
-                        project.rootProject.setProperty(it.first, it.second.toString())
-                    }
-                }
-            }
-        }
-
-        VersionBumpHelper.init()
-
         project.afterEvaluate {
-            if (project.hasProperty("buildNrName")) {
-                VersionBumpHelper.init(project.property("buildNrName").toString())
-            }
-            val variants = project.extensions.findByType(AppExtension::class.java)?.applicationVariants
-            VersionBumpHelper.init(variants?.map { it.name })
-
             subPlugins.forEach { it.configure(project, extension) }
         }
         translations.init(project)

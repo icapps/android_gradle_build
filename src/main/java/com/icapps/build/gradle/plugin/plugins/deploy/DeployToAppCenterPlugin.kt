@@ -5,7 +5,6 @@ import com.chimerapps.gradle.AppCenterExtension
 import com.icapps.build.gradle.plugin.Constants
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
-import com.icapps.build.gradle.plugin.plugins.codequality.PullRequestPlugin
 import com.icapps.build.gradle.plugin.utils.*
 import org.gradle.api.Project
 
@@ -26,24 +25,9 @@ class DeployToAppCenterPlugin : BuildSubPlugin {
         project.plugins.apply(AndroidGradleAppCenterPlugin::class.java)
         project.tasks.filter { it.group == GROUP_APPCENTER_PLUGIN }
                 .forEach {
-                    val buildExtension = project.extensions.getByType(BuildExtension::class.java)
-                    if (buildExtension.prConfig != null)
-                        it.dependsOn(PullRequestPlugin.PULL_REQUEST_TASK)
-                    else if (buildExtension.detektConfig != null) {
-                        it.dependsOn("detektCheck")
-                    }
                     it.doFirst {
                         val appCenter = project.extensions.getByType(AppCenterExtension::class.java)
                         appCenter.releaseNotes = getReleaseNotes(project)
-                    }
-
-                    it.doLast { task ->
-                        val name = task.name.removeFirst("upload").removeLast("ToAppCenter")
-                        val result = VersionBumpHelper.resetBuildNr()
-                        project.setProperty(result.first, result.second.toString())
-                        project.rootProject.setProperty(result.first, result.second.toString())
-                        GitHelper.addAndCommit("Version Bump - ${name.capitalize()}")
-                        GitHelper.pushToOrigin()
                     }
                 }
     }

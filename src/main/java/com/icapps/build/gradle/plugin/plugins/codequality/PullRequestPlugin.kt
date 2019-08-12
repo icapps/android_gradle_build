@@ -25,7 +25,7 @@ class PullRequestPlugin : BuildSubPlugin {
 
         val task = project.tasks.create(PULL_REQUEST_TASK) { task ->
             if (prConfig.detekt && configuration.detektConfig != null)
-                task.dependsOn("detektCheck")
+                task.dependsOn("detekt")
             if (prConfig.lint)
                 addLintTask(project, task, prConfig)
             if (prConfig.unitTest)
