@@ -52,7 +52,7 @@ Add the `iCappsBuildConfig` at the bottom of you app/build.gradle file
             apiKey = "your-icapps-translations-api-key"
         }
 
-        appcenterAndroid {
+        appCenter {
             apiKey = 'your-api-key'
             appOwner = 'your-organization-name'
             applicationIdToAppName = { applicationId ->
