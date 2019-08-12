@@ -50,7 +50,7 @@ dependencies {
     compile "com.chimerapps.gradle:gradle-appcenter-android-plugin:1.0"
     compile "com.chimerapps:bitbucketcloud-api:0.1.2"
     compile "com.chimerapps.gradle:icapps-translations-plugin:1.0.5"
-    compile "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.0.0-RC14"
+    compile "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.0.0"
     compile "com.github.triplet.gradle:play-publisher:1.2.0"
     compileOnly "com.android.tools.build:gradle:3.0.1"
 
