@@ -7,7 +7,7 @@ import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
 import com.icapps.build.gradle.plugin.plugins.codequality.BitBucketPullRequestPlugin
 import com.icapps.build.gradle.plugin.plugins.codequality.DetektPlugin
 import com.icapps.build.gradle.plugin.plugins.codequality.PullRequestPlugin
-import com.icapps.build.gradle.plugin.plugins.deploy.DeployToHockeyPlugin
+import com.icapps.build.gradle.plugin.plugins.deploy.DeployToAppCenterPlugin
 import com.icapps.build.gradle.plugin.plugins.deploy.DeployToPlayStorePlugin
 import com.icapps.build.gradle.plugin.plugins.status.GitStatusPlugin
 import com.icapps.build.gradle.plugin.plugins.translations.TranslationsPlugin
@@ -48,6 +48,7 @@ open class BuildPlugin : Plugin<Project> {
         val subPlugins = mutableListOf<BuildSubPlugin>()
 
         val deployToPlayStorePlugin = DeployToPlayStorePlugin()
+        val deployToAppCenterPlugin = DeployToAppCenterPlugin()
         val translations = TranslationsPlugin()
         subPlugins.replaceAll(translations,
                 GitStatusPlugin(),
@@ -55,7 +56,7 @@ open class BuildPlugin : Plugin<Project> {
                 DetektPlugin(),
                 PullRequestPlugin(),
                 BitBucketPullRequestPlugin(),
-                DeployToHockeyPlugin(),
+                deployToAppCenterPlugin,
                 deployToPlayStorePlugin)
 
         var versionBump = false
@@ -99,6 +100,7 @@ open class BuildPlugin : Plugin<Project> {
             subPlugins.forEach { it.configure(project, extension) }
         }
         translations.init(project)
+        deployToAppCenterPlugin.init(project)
         deployToPlayStorePlugin.init(project)
     }
 
