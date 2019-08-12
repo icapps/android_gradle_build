@@ -1,20 +1,21 @@
 package com.icapps.build.gradle.plugin.plugins.deploy
 
+import com.chimerapps.gradle.AndroidGradleAppCenterPlugin
+import com.chimerapps.gradle.AppCenterExtension
 import com.icapps.build.gradle.plugin.Constants
 import com.icapps.build.gradle.plugin.config.BuildExtension
 import com.icapps.build.gradle.plugin.plugins.BuildSubPlugin
 import com.icapps.build.gradle.plugin.plugins.codequality.PullRequestPlugin
 import com.icapps.build.gradle.plugin.utils.*
-import de.felixschulze.gradle.HockeyAppPlugin
-import de.felixschulze.gradle.HockeyAppPluginExtension
 import org.gradle.api.Project
 
 /**
  * @author Nicola Verbeeck
  */
-class DeployToHockeyPlugin : BuildSubPlugin {
+class DeployToAppCenterPlugin : BuildSubPlugin {
 
     companion object {
+        const val GROUP_APPCENTER_PLUGIN = "AppCenter"
         const val RELEASE_NOTES_MAX_LENGTH = 5000
         const val PROPERTY_NOTES = "notes"
         const val ENV_HOCKEY_RELEASE_NOTES = "HOCKEY_RELEASE_NOTES"
@@ -22,8 +23,8 @@ class DeployToHockeyPlugin : BuildSubPlugin {
     }
 
     override fun init(project: Project) {
-        project.plugins.apply(HockeyAppPlugin::class.java)
-        project.tasks.filter { it.group == HockeyAppPlugin.getGROUP_NAME() }
+        project.plugins.apply(AndroidGradleAppCenterPlugin::class.java)
+        project.tasks.filter { it.group == GROUP_APPCENTER_PLUGIN }
                 .forEach {
                     val buildExtension = project.extensions.getByType(BuildExtension::class.java)
                     if (buildExtension.prConfig != null)
@@ -32,13 +33,12 @@ class DeployToHockeyPlugin : BuildSubPlugin {
                         it.dependsOn("detektCheck")
                     }
                     it.doFirst {
-                        val hockeyConfig = project.extensions.getByType(HockeyAppPluginExtension::class.java)
-                        hockeyConfig.notify = "1"
-                        hockeyConfig.notes = getReleaseNotes(project)
+                        val appCenter = project.extensions.getByType(AppCenterExtension::class.java)
+                        appCenter.releaseNotes = getReleaseNotes(project)
                     }
 
-                    it.doLast {
-                        val name = it.name.removeFirst("upload").removeLast("ToHockeyApp")
+                    it.doLast { task ->
+                        val name = task.name.removeFirst("upload").removeLast("ToAppCenter")
                         val result = VersionBumpHelper.resetBuildNr()
                         project.setProperty(result.first, result.second.toString())
                         project.rootProject.setProperty(result.first, result.second.toString())
@@ -49,49 +49,33 @@ class DeployToHockeyPlugin : BuildSubPlugin {
     }
 
     override fun configure(project: Project, configuration: BuildExtension) {
-        val config = configuration.hockeyConfig
+        val config = configuration.appCenterExtension
         if (config == null) {
-            project.logger.debug("${Constants.LOGGING_PREFIX} No Hockey block set in gradle. Hockey App Deployment will not be available for this project.")
+            project.logger.debug("${Constants.LOGGING_PREFIX} No AppCenter block set in gradle. AppCenter App Deployment will not be available for this project.")
             return
         }
 
-        if (config.apiToken == null) {
-            throw IllegalArgumentException("No ApiToken provided in gradle. Hockey Plugin could not be configured correctly.")
+        if (config.apiKey == null) {
+            throw IllegalArgumentException("No ApiKey provided in gradle. AppCenter Plugin could not be configured correctly.")
+        }
+
+        if (config.appOwner == null) {
+            throw IllegalArgumentException("No AppOwner provided in gradle. AppCenter Plugin could not be configured correctly.")
         }
 
         init(project)
 
-        val hockeyConfig = project.extensions.getByType(HockeyAppPluginExtension::class.java)
-
-        hockeyConfig.setOutputDirectory(config.outputDirectory)
-        hockeyConfig.symbolsDirectory = config.symbolsDirectory
-        hockeyConfig.apiToken = config.apiToken
-        hockeyConfig.variantToApiToken = config.variantToApiToken
-        hockeyConfig.notes = config.notes
-        hockeyConfig.variantToNotes = config.variantToNotes
-        hockeyConfig.status = config.status
-        hockeyConfig.notify = config.notify
-        hockeyConfig.variantToNotify = config.variantToNotify
-        hockeyConfig.notesType = config.notesType
-        hockeyConfig.variantToNotesType = config.variantToNotesType
-        hockeyConfig.releaseType = config.releaseType
-        hockeyConfig.variantToReleaseType = config.variantToReleaseType
-        hockeyConfig.appFileNameRegex = config.appFileNameRegex
-        hockeyConfig.mappingFileNameRegex = config.mappingFileNameRegex
-        hockeyConfig.commitSha = config.commitSha
-        hockeyConfig.buildServerUrl = config.buildServerUrl
-        hockeyConfig.repositoryUrl = config.repositoryUrl
-        hockeyConfig.tags = config.tags
-        hockeyConfig.variantToTags = config.variantToTags
-        hockeyConfig.teams = config.teams
-        hockeyConfig.users = config.users
-        hockeyConfig.timeout = config.timeout
-        hockeyConfig.variantToApplicationId = config.variantToApplicationId
-        hockeyConfig.teamCityLog = config.teamCityLog
-        hockeyConfig.variantToStatus = config.variantToStatus
-        hockeyConfig.mandatory = config.mandatory
-        hockeyConfig.variantToMandatory = config.variantToMandatory
-        hockeyConfig.hockeyApiUrl = config.hockeyApiUrl
+        val hockeyConfig = project.extensions.getByType(AppCenterExtension::class.java)
+        hockeyConfig.apply {
+            apiKey = config.apiKey
+            appOwner = config.appOwner
+            applicationIdToAppName = config.applicationIdToAppName
+            notifyTesters = config.notifyTesters
+            testers = config.testers
+            releaseNotes = config.releaseNotes
+            variantToAppName = config.variantToAppName
+            flavorToAppName = config.flavorToAppName
+        }
     }
 
     private fun getReleaseNotes(project: Project): String {

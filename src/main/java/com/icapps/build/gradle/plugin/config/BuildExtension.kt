@@ -1,7 +1,7 @@
 package com.icapps.build.gradle.plugin.config
 
+import com.chimerapps.gradle.AppCenterExtension
 import com.chimerapps.gradle.icapps_translations.DownloadTranslationsExtension
-import de.felixschulze.gradle.HockeyAppPluginExtension
 import de.triplet.gradle.play.PlayPublisherPluginExtension
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -16,7 +16,7 @@ open class BuildExtension(private val project: Project) {
     var playConfig: PlayPublisherPluginExtension? = null
     var prConfig: PullRequestConfiguration? = PullRequestConfiguration()
     var bitbucketConfig: BitbucketPullRequestConfiguration? = null
-    var hockeyConfig: HockeyAppPluginExtension? = null
+    var appCenterExtension: AppCenterExtension? = null
 
     open fun playStore(configuration: Action<in PlayPublisherPluginExtension>) {
         playConfig = PlayPublisherPluginExtension().apply { configuration.execute(this) }
@@ -38,7 +38,7 @@ open class BuildExtension(private val project: Project) {
         detektConfig = DetektExtension().apply { configuration.execute(this) }
     }
 
-    open fun hockey(configuration: Action<in HockeyAppPluginExtension>) {
-        hockeyConfig = HockeyAppPluginExtension(project).apply { configuration.execute(this) }
+    open fun appCenter(configuration: Action<in AppCenterExtension>) {
+        appCenterExtension = AppCenterExtension().apply { configuration.execute(this) }
     }
 }
