@@ -1,6 +1,10 @@
-### Android Gradle Build Script ###
+### Android Gradle Build Plugin###
 
-**How To Use**
+**Getting Started**
+
+This readme is purly for using the basic config and how you should setup the plugin. Check the [Wiki](https://github.com/icapps/android_gradle_build/wiki) for a specific configuration
+
+**Setup**
 
 [ ![Download](https://api.bintray.com/packages/icapps/maven/icapps-build-gradle-plugin/images/download.svg) ](https://bintray.com/icapps/maven/icapps-build-gradle-plugin/_latestVersion)
 
@@ -25,6 +29,8 @@ Import in root gradle
 Apply the plugin by adding next command at the top of your app/build.gradle file
 
     apply plugin: 'icapps-build-gradle-plugin'
+
+**Config**
 
 Add the `iCappsBuildConfig` at the bottom of you `app/build.gradle` file 
 
