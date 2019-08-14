@@ -14,7 +14,7 @@ Import in root gradle
     buildscript {
         repositories {
             ...
-        	maven { url "https://dl.bintray.com/icapps/maven" }
+            maven { url "https://dl.bintray.com/icapps/maven" }
             maven { url "https://dl.bintray.com/nicolaverbeeck/maven" }
             ...
         }
