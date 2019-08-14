@@ -1,4 +1,4 @@
-### Android Gradle Build Plugin###
+### Android Gradle Build Plugin
 
 **Getting Started**
 
