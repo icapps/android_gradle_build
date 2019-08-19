@@ -12,7 +12,7 @@ plugins {
     id "com.jfrog.bintray" version "1.8.4"
 }
 
-def artifactVersion = '2.1.0'
+def artifactVersion = '2.1.1'
 def artifactGroup = 'com.icapps.build.gradle'
 group "$artifactGroup"
 version "$artifactVersion"
@@ -47,7 +47,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.41"
     compile "org.jetbrains.kotlin:kotlin-reflect:1.3.21"
-    compile "com.chimerapps.gradle:gradle-appcenter-android-plugin:1.1.0"
+    compile "com.chimerapps.gradle:gradle-appcenter-android-plugin:1.1.1"
     compile "com.chimerapps:bitbucketcloud-api:0.1.2"
     compile "com.chimerapps.gradle:icapps-translations-plugin:1.0.5"
     compile "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.0.0"
