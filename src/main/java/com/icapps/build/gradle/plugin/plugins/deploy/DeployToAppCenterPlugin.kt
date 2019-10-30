@@ -53,12 +53,25 @@ class DeployToAppCenterPlugin : BuildSubPlugin {
         hockeyConfig.apply {
             apiKey = config.apiKey
             appOwner = config.appOwner
-            applicationIdToAppName = config.applicationIdToAppName
             notifyTesters = config.notifyTesters
-            testers = config.testers
             releaseNotes = config.releaseNotes
-            variantToAppName = config.variantToAppName
+            testers = config.testers
+            applicationIdToAppName = config.applicationIdToAppName
             flavorToAppName = config.flavorToAppName
+            variantToAppName = config.variantToAppName
+            maxRetries = config.maxRetries
+            applicationIdToTesters = config.applicationIdToTesters
+            flavorToTesters = config.flavorToTesters
+            variantToTesters = config.variantToTesters
+            applicationIdToReleaseNotes = config.applicationIdToReleaseNotes
+            flavorToReleaseNotes = config.flavorToReleaseNotes
+            variantToReleaseNotes = config.variantToReleaseNotes
+            applicationIdToNotifyTesters = config.applicationIdToNotifyTesters
+            flavorToNotifyTesters = config.flavorToNotifyTesters
+            variantToNotifyTesters = config.variantToNotifyTesters
+            applicationIdToAppOwner = config.applicationIdToAppOwner
+            flavorToAppOwner = config.flavorToAppOwner
+            variantToAppOwner = config.variantToAppOwner
         }
     }
 
