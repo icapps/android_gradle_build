@@ -2,7 +2,6 @@ package com.icapps.build.gradle.plugin.config
 
 import com.chimerapps.gradle.AppCenterExtension
 import com.chimerapps.gradle.icapps_translations.DownloadTranslationsExtension
-import de.triplet.gradle.play.PlayPublisherPluginExtension
 import org.gradle.api.Action
 import org.gradle.api.Project
 
@@ -13,14 +12,9 @@ open class BuildExtension(private val project: Project) {
 
     var translationConfig: DownloadTranslationsExtension? = null
     var detektConfig: DetektExtension? = null
-    var playConfig: PlayPublisherPluginExtension? = null
     var prConfig: PullRequestConfiguration? = PullRequestConfiguration()
     var bitbucketConfig: BitbucketPullRequestConfiguration? = null
     var appCenterExtension: AppCenterExtension? = null
-
-    open fun playStore(configuration: Action<in PlayPublisherPluginExtension>) {
-        playConfig = PlayPublisherPluginExtension().apply { configuration.execute(this) }
-    }
 
     open fun pr(configuration: Action<in PullRequestConfiguration>) {
         prConfig = PullRequestConfiguration().apply { configuration.execute(this) }

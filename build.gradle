@@ -12,7 +12,7 @@ plugins {
     id "com.jfrog.bintray" version "1.8.4"
 }
 
-def artifactVersion = '2.2.0'
+def artifactVersion = '3.0.0'
 def artifactGroup = 'com.icapps.build.gradle'
 group "$artifactGroup"
 version "$artifactVersion"
@@ -51,7 +51,6 @@ dependencies {
     compile "com.chimerapps:bitbucketcloud-api:0.1.2"
     compile "com.chimerapps.gradle:icapps-translations-plugin:1.0.5"
     compile "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.0.0"
-    compile "com.github.triplet.gradle:play-publisher:1.2.0"
     compileOnly "com.android.tools.build:gradle:3.0.1"
 
     testCompile "junit:junit:4.11"

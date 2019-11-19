@@ -7,7 +7,6 @@ import com.icapps.build.gradle.plugin.plugins.codequality.BitBucketPullRequestPl
 import com.icapps.build.gradle.plugin.plugins.codequality.DetektPlugin
 import com.icapps.build.gradle.plugin.plugins.codequality.PullRequestPlugin
 import com.icapps.build.gradle.plugin.plugins.deploy.DeployToAppCenterPlugin
-import com.icapps.build.gradle.plugin.plugins.deploy.DeployToPlayStorePlugin
 import com.icapps.build.gradle.plugin.plugins.status.GitStatusPlugin
 import com.icapps.build.gradle.plugin.plugins.translations.TranslationsPlugin
 import com.icapps.build.gradle.plugin.utils.replaceAll
@@ -42,7 +41,6 @@ open class BuildPlugin : Plugin<Project> {
         val extension = project.extensions.create(CONFIG_NAME, BuildExtension::class.java, project)
         val subPlugins = mutableListOf<BuildSubPlugin>()
 
-        val deployToPlayStorePlugin = DeployToPlayStorePlugin()
         val deployToAppCenterPlugin = DeployToAppCenterPlugin()
         val translations = TranslationsPlugin()
         subPlugins.replaceAll(translations,
@@ -50,15 +48,13 @@ open class BuildPlugin : Plugin<Project> {
                 DetektPlugin(),
                 PullRequestPlugin(),
                 BitBucketPullRequestPlugin(),
-                deployToAppCenterPlugin,
-                deployToPlayStorePlugin)
+                deployToAppCenterPlugin)
 
         project.afterEvaluate {
             subPlugins.forEach { it.configure(project, extension) }
         }
         translations.init(project)
         deployToAppCenterPlugin.init(project)
-        deployToPlayStorePlugin.init(project)
     }
 
     companion object {

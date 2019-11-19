@@ -247,45 +247,6 @@ _More Info_
 
 https://github.com/Chimerapps/icapps-translations-gradle-plugin\
 
-**Configure Play Store Publisher**
-
-_Default Setup_
-
-By adding the following command to your `iCappsBuildConfig` you will enable `playStore` for your project with the default Play Store Publisher configuration
-<br/>
-This are all the **required** params
-
-    playStore {
-        serviceAccountEmail = 'your-play-store-account-email'   //Your email adress that will be used to authenticate with Google Play Console
-        pk12File = file("${projectDir}/signing/key.p12")        //The file that will be used for authenticating with the Google Play Console
-    }
-
-_Recommended Setup_
-
-By adding the following command to your `iCappsBuildConfig` you will enable `playStore` for your project with the default Play Store Publisher configurations and will override all the given params
-
-    playStore {
-        serviceAccountEmail = 'your-play-store-account-email'   //Your email adress that will be used to authenticate with Google Play Console
-        pk12File = file("${projectDir}/signing/key.p12")        //The file that will be used for authenticating with the Google Play Console
-        track = "alpha"                                         //The track where your bill wil be deployed. Possible Options: (alpha, beta, rollout, production). Default: alpha
-    }
-
-_Full Setup_
-
-By adding the following command to your `iCappsBuildConfig` you will enable `playStore` for your project with all the given params
-
-    playStore {
-        serviceAccountEmail = 'your-play-store-account-email'   //Your email adress that will be used to authenticate with Google Play Console
-        pk12File = file("${projectDir}/signing/key.p12")        //The file that will be used for authenticating with the Google Play Console
-        track = "alpha"                                         //The track where your bill wil be deployed. Possible Options: (alpha, beta, rollout, production). Default: alpha
-        userFraction = 0.1                                      //The track where your bill wil be deployed. Possible Options: value from 0 to 1. Default: 0.1
-        untrackOld = false                                      //The track where your bill wil be deployed. Possible Options: (true,false). Default: false
-    }
-
-_More Info_
-
-https://github.com/Triple-T/gradle-play-publisher
-
 **Configure Bitbucket**
 
 Automatically create pull requests on bitbucket. This task will first run the _pullRequest_ task to ensure the repo is in a valid state
@@ -322,10 +283,6 @@ https://github.com/Chimerapps/gradle-appcenter-android-plugin
 _Gradle Translations plugin:_
 
 https://github.com/Chimerapps/icapps-translations-gradle-plugin
-
-_Gradle Play Store Publisher:_
-
-https://github.com/Triple-T/gradle-play-publisher
 
 _Gradle detekt plugin:_
 
