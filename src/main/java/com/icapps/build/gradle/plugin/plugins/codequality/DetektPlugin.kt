@@ -33,15 +33,35 @@ class DetektPlugin : BuildSubPlugin {
         ensureBaseLineFile(project)
 
         project.extensions.getByType(DetektExtension::class.java).apply {
-            this.config = config.config ?: project.layout.configurableFiles(getDefaultConfigFile(project).path)
+
+            this.config = config.config ?: getConfigurableFiles(project)
             this.input = config.input ?: guessProgramSources(project)
             baseline = config.baseline ?: getBaseLineFile(project)
             failFast = config.failFast ?: true
-            filters = config.filters
         }
 
         val root = project.rootProject.repositories
         project.buildscript.repositories.addAll(root)
+    }
+
+    private fun getConfigurableFiles(project: Project): ConfigurableFileCollection {
+        return try {
+            @Suppress("DEPRECATION")
+            project.layout.configurableFiles(getDefaultConfigFile(project).path)
+        } catch (ignored: Throwable) {
+            @Suppress("UnstableApiUsage")
+            project.objects.fileCollection().from(getDefaultConfigFile(project).path)
+        }
+    }
+
+    private fun getConfigurableFiles(project: Project, vararg path: String): ConfigurableFileCollection {
+        return try {
+            @Suppress("DEPRECATION")
+            project.layout.configurableFiles(*path)
+        } catch (ignored: Throwable) {
+            @Suppress("UnstableApiUsage")
+            project.objects.fileCollection().from(*path)
+        }
     }
 
     private fun ensureDetektFile(project: Project) {
@@ -102,12 +122,12 @@ class DetektPlugin : BuildSubPlugin {
         val java = project.file("src/main/java")
         val kotlin = project.file("src/main/kotlin")
         if (java.exists() && kotlin.exists())
-            return project.layout.configurableFiles(kotlin.absolutePath, java.absolutePath)
+            return getConfigurableFiles(project, kotlin.absolutePath, java.absolutePath)
         if (java.exists())
-            return project.layout.configurableFiles(java.absolutePath)
+            return getConfigurableFiles(project, java.absolutePath)
         if (kotlin.exists())
-            return project.layout.configurableFiles(kotlin.absolutePath)
-        return project.layout.configurableFiles(project.file("src/main").absolutePath)
+            return getConfigurableFiles(project, kotlin.absolutePath)
+        return getConfigurableFiles(project, project.file("src/main").absolutePath)
     }
 
     private fun getDefaultConfigFile(project: Project): File {
