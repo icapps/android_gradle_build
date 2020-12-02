@@ -9,5 +9,4 @@ import java.io.File
 open class DetektExtension(var input: ConfigurableFileCollection? = null,
                            var config: ConfigurableFileCollection? = null,
                            var baseline: File? = null,
-                           var filters: String? = null,
                            var failFast: Boolean? = null)
