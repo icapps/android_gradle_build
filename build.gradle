@@ -13,7 +13,7 @@ plugins {
 	id "com.github.ben-manes.versions" version "0.36.0"
 }
 
-def artifactVersion = '3.0.3'
+def artifactVersion = '3.0.4'
 def artifactGroup = 'com.icapps.build.gradle'
 group "$artifactGroup"
 version "$artifactVersion"
@@ -48,7 +48,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20"
     compile "org.jetbrains.kotlin:kotlin-reflect:1.4.20"
-    compile "com.chimerapps.gradle:gradle-appcenter-android-plugin:1.3.5"
+    compile "com.chimerapps.gradle:gradle-appcenter-android-plugin:1.3.6"
     compile "com.chimerapps:bitbucketcloud-api:0.1.2"
     compile "com.chimerapps.gradle:icapps-translations-plugin:1.1.0"
     compile "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.14.1"
