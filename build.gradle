@@ -5,24 +5,17 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.20"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.30"
     }
 }
 plugins {
-    id "com.jfrog.bintray" version "1.8.5"
 	id "com.github.ben-manes.versions" version "0.36.0"
 }
-
-def artifactVersion = '3.1.0'
-def artifactGroup = 'com.icapps.build.gradle'
-group "$artifactGroup"
-version "$artifactVersion"
 
 //plugins
 apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'java-gradle-plugin'
-apply plugin: 'maven-publish'
 apply plugin: 'idea'
 
 sourceCompatibility = 1.8
@@ -42,7 +35,6 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url "https://plugins.gradle.org/m2/" }
-    maven { url "https://dl.bintray.com/nicolaverbeeck/maven" }
 }
 
 dependencies {
@@ -57,67 +49,11 @@ dependencies {
     testCompile "junit:junit:4.13.1"
 }
 
-bintray {
-    user = System.getenv('BINTRAY_USER_ICAPPS')
-    key = System.getenv('BINTRAY_KEY_ICAPPS')
-    pkg {
-        repo = 'maven'
-        name = 'icapps-build-gradle-plugin'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/icapps/android_gradle_build'
-
-        version {
-            name = "$artifactVersion"
-            desc = "Gradle plugin for icapps build"
-            released = new Date()
-        }
-    }
-    publications = ['maven']
+ext {
+    artifactVersion = '3.1.0'
+    artifactName = 'plugin'
+    artifactGroup = 'com.icapps.build.gradle'
+    artifactDescription = 'Gradle plugin that will contain everything to build, check and deploy to the right platform (AppCenter, Play Store)'
 }
 
-def pomConfig = {
-    licenses {
-        license {
-            name "The Apache Software License, Version 2.0"
-            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-            distribution "repo"
-        }
-    }
-    developers {
-        developer {
-            name "Koen Van Looveren"
-            email "koen.vanlooveren@icapps.com"
-            organization "icapps"
-        }
-        developer {
-            name "Nicola Verbeeck"
-            email "nicola.verbeeck@icapps.com"
-            organization "icapps"
-        }
-    }
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId "$artifactGroup"
-            artifactId 'plugin'
-            version "$artifactVersion"
-
-            from components.java
-
-            artifact sourceJar {
-                classifier "sources"
-            }
-            artifact javadocJar
-
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', 'Gradle plugin that will contain everything to build, check and deploy to the right platform (AppCenter, Play Store)')
-                root.appendNode('name', 'icapps-build-gradle-plugin')
-                root.appendNode('url', 'https://github.com/icapps/android_gradle_build')
-                root.children().last() + pomConfig
-            }
-        }
-    }
-}
+apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
