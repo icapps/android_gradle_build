@@ -4,11 +4,11 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.32"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21"
     }
 }
 plugins {
-	id "com.github.ben-manes.versions" version "0.38.0"
+	id "com.github.ben-manes.versions" version "0.39.0"
 }
 
 //plugins
@@ -33,22 +33,23 @@ repositories {
     google()
     mavenCentral()
     maven { url "https://plugins.gradle.org/m2/" }
+    mavenLocal()
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.32"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.4.32"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.5.21"
     compile "com.chimerapps.gradle:gradle-appcenter-android-plugin:1.4.0"
     compile "com.chimerapps:bitbucketcloud-api:0.1.2"
-    compile "com.chimerapps.gradle:icapps-translations-plugin:1.1.0"
-    compile "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.16.0"
+    compile "com.chimerapps.gradle:icapps-translations-plugin:1.2.0"
+    compile "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.17.1"
     compileOnly "com.android.tools.build:gradle:3.0.1"
 
-    testCompile "junit:junit:4.13.1"
+    testCompile "junit:junit:4.13.2"
 }
 
 ext {
-    artifactVersion = '3.1.1'
+    artifactVersion = '3.2.0'
     artifactName = 'plugin'
     artifactGroup = 'com.icapps.build.gradle'
     artifactDescription = 'Gradle plugin that will contain everything to build, check and deploy to the right platform (AppCenter, Play Store)'

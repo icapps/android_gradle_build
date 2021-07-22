@@ -7,6 +7,7 @@ import com.chimerapps.bitbucketcloud.api.model.PullRequest
 import com.icapps.build.gradle.plugin.Constants
 import com.icapps.build.gradle.plugin.utils.GitHelper
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
 /**
@@ -14,11 +15,24 @@ import org.gradle.api.tasks.TaskAction
  */
 open class BitbucketPrTask : DefaultTask() {
 
+    @field:Internal
+    @set:Internal
+    @get:Internal
     lateinit var user: String
+    @field:Internal
+    @set:Internal
+    @get:Internal
     lateinit var bitbucketUser: String
+    @field:Internal
+    @set:Internal
+    @get:Internal
     lateinit var bitbucketAppKey: String
+    @field:Internal
+    @set:Internal
+    @get:Internal
     lateinit var prBranch: String
 
+    @field:Internal
     private lateinit var bitbucket: Bitbucket
 
     @TaskAction
