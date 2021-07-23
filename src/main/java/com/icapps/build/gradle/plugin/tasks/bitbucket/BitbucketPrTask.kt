@@ -15,24 +15,15 @@ import org.gradle.api.tasks.TaskAction
  */
 open class BitbucketPrTask : DefaultTask() {
 
-    @field:Internal
-    @set:Internal
     @get:Internal
     lateinit var user: String
-    @field:Internal
-    @set:Internal
     @get:Internal
     lateinit var bitbucketUser: String
-    @field:Internal
-    @set:Internal
     @get:Internal
     lateinit var bitbucketAppKey: String
-    @field:Internal
-    @set:Internal
     @get:Internal
     lateinit var prBranch: String
 
-    @field:Internal
     private lateinit var bitbucket: Bitbucket
 
     @TaskAction

@@ -10,8 +10,6 @@ import org.gradle.api.tasks.TaskAction
  */
 open class CommitTask : DefaultTask() {
 
-    @field:Internal
-    @set:Internal
     @get:Internal
     lateinit var message: String
 
